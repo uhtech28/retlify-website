@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Retlify — AI Product Image Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:     #0D0D0F;
+  --ink-60:  #5C5C6E;
+  --surface: #F7F7F5;
+  --panel:   #FFFFFF;
+  --border:  #E8E8EF;
+  --accent:  #FFD23F;
+  --green:   #16A34A;
+  --radius:  16px;
+  --shadow:  0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+}
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--surface);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Topbar ─────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(247,247,245,.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.logo {
+  width: 28px; height: 28px; background: var(--ink); color: var(--accent);
+  border-radius: 7px; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 11px; letter-spacing: -1px;
+}
+.brand-name { font-size: 14px; font-weight: 700; }
+.badges { display: flex; gap: 8px; }
+.badge {
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+.badge-green { background: #DCFCE7; color: #166534; }
+.badge-blue  { background: #EFF6FF; color: #1D4ED8; }
+
+/* ── Page ───────────────────────────────────── */
+.page { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* ── Hero ───────────────────────────────────── */
+.hero { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--ink-60); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before { content: ''; width: 16px; height: 1px; background: var(--ink-60); }
+.hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(30px, 5vw, 50px);
+  font-weight: 400; line-height: 1.15; letter-spacing: -.5px; margin-bottom: 14px;
+}
+.hero h1 em { font-style: italic; color: #E85520; }
+.hero p { font-size: 15px; color: var(--ink-60); line-height: 1.65; max-width: 560px; }
+
+/* Fix grid ─────────────────────────────────── */
+.fix-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.fix-chip {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 14px; background: var(--panel); border: 1.5px solid var(--border);
+  border-radius: 10px; font-size: 12px; font-weight: 600; color: var(--ink);
+}
+.fix-chip .dot { width: 7px; height: 7px; border-radius: 50%; }
+.dot-green { background: var(--green); }
+.dot-blue  { background: #2563EB; }
+.dot-red   { background: #EF4444; }
+
+/* ── Card ───────────────────────────────────── */
+.card {
+  background: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-head {
+  padding: 20px 26px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.card-head-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, #111827, #374151);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+}
+.card-head-title { font-size: 16px; font-weight: 700; }
+.card-head-sub   { font-size: 12px; color: var(--ink-60); margin-top: 2px; }
+.card-body { padding: 26px; }
+
+/* ── Prompt debug panel ─────────────────────── */
+.debug-panel {
+  margin-top: 32px;
+  background: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.debug-head {
+  padding: 14px 20px;
+  background: #111827; color: var(--accent);
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; user-select: none;
+}
+.debug-body { padding: 20px; display: none; }
+.debug-body.open { display: block; }
+.debug-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.debug-tab {
+  padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1.5px solid var(--border); color: #374151;
+  background: #F9FAFB; transition: all .15s;
+}
+.debug-tab.active { background: #111827; color: var(--accent); border-color: #111827; }
+.debug-prompt {
+  font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.7;
+  background: #F9FAFB; border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; color: #1e293b; word-break: break-word;
+  white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="brand" href="#">
+    <div class="logo">Rt</div>
+    <span class="brand-name">Retlify</span>
+  </a>
+  <div class="badges">
+    <span class="badge badge-green">v5 Fixed</span>
+    <span class="badge badge-blue">100% Free · No API Key</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">AI Product Image Studio</div>
+    <h1>Product images that show<br><em>the actual product.</em></h1>
+    <p>
+      Powered by Puter.js with category-aware prompts. Input "shirt" and get shirt photos —
+      not buildings, not landscapes, not abstracts.
+    </p>
+    <div class="fix-row">
+      <div class="fix-chip"><span class="dot dot-green"></span> Puter.js primary (free, no key)</div>
+      <div class="fix-chip"><span class="dot dot-blue"></span> Pollinations fallback</div>
+      <div class="fix-chip"><span class="dot dot-blue"></span> Picsum final fallback</div>
+      <div class="fix-chip"><span class="dot dot-green"></span> Strong negative prompts</div>
+      <div class="fix-chip"><span class="dot dot-green"></span> Category-aware vocabulary</div>
+      <div class="fix-chip"><span class="dot dot-red"></span> No HuggingFace / Replicate</div>
+    </div>
+  </div>
+
+  <!-- Generator Card -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon">🖼️</div>
+      <div>
+        <div class="card-head-title">AI Product Image Generator</div>
+        <div class="card-head-sub">Studio · Model · Lifestyle · Editorial — 4 shots, parallel generation</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="image-grid"></div>
+    </div>
+  </div>
+
+  <!-- Prompt debug panel -->
+  <div class="debug-panel" id="debug-panel">
+    <div class="debug-head" onclick="toggleDebug()">
+      🧠 Live Prompt Inspector — see exactly what gets sent to the AI
+      <span id="debug-toggle" style="margin-left:auto;font-size:11px">▼ Expand</span>
+    </div>
+    <div class="debug-body" id="debug-body">
+      <p style="font-size:13px;color:#6B7280;margin-bottom:14px">
+        Type a product name above to preview the 4 prompts.
+        These prompts are what fixes the "buildings instead of shirts" problem.
+      </p>
+      <div class="debug-tabs" id="debug-tabs"></div>
+      <div class="debug-prompt" id="debug-prompt">Prompt will appear here after you type a product name…</div>
+      <div style="margin-top:10px;font-size:11px;color:#9CA3AF">
+        <strong style="color:#374151">Negative prompt applied to all shots:</strong><br>
+        <span id="debug-negative"></span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!--
+  Load order matters:
+  1. promptBuilder.js  — registers window.buildImagePrompts
+  2. imageService.js   — registers window.generateImages  (depends on promptBuilder)
+  3. ImageGrid.js      — registers window.ImageGrid       (depends on both)
+-->
+<script src="promptBuilder.js"></script>
+<script src="imageService.js"></script>
+<script src="ImageGrid.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  // Boot the ImageGrid widget
+  const grid = new ImageGrid('#image-grid');
+
+  // ── Prompt debug inspector ────────────────────────────────────
+  let currentTab = 'studio';
+
+  function toggleDebug() {
+    const body   = document.getElementById('debug-body');
+    const toggle = document.getElementById('debug-toggle');
+    const open   = body.classList.toggle('open');
+    toggle.textContent = open ? '▲ Collapse' : '▼ Expand';
+    if (open) refreshDebug();
+  }
+
+  function refreshDebug() {
+    const nameEl  = document.getElementById('ig2-name');
+    const catEl   = document.getElementById('ig2-cat');
+    const featsEl = document.getElementById('ig2-feats');
+    if (!nameEl) return;
+
+    const name  = nameEl.value.trim();
+    const cat   = catEl  ? catEl.value  : '';
+    const feats = featsEl? featsEl.value: '';
+
+    const negEl = document.getElementById('debug-negative');
+    if (negEl && window.NEGATIVE_PROMPT) negEl.textContent = window.NEGATIVE_PROMPT;
+
+    if (!name) {
+      document.getElementById('debug-prompt').textContent = 'Type a product name in the form above…';
+      document.getElementById('debug-tabs').innerHTML = '';
+      return;
+    }
+
+    let prompts;
+    try {
+      prompts = window.buildImagePrompts({ productName: name, category: cat, features: feats });
+    } catch (e) {
+      document.getElementById('debug-prompt').textContent = 'Error: ' + e.message;
+      return;
+    }
+
+    const shotTypes = ['studio', 'model', 'lifestyle', 'editorial'];
+
+    // Render tabs
+    document.getElementById('debug-tabs').innerHTML = shotTypes.map(t => `
+      <div class="debug-tab${currentTab === t ? ' active' : ''}" data-tab="${t}">
+        ${prompts[t].emoji} ${prompts[t].label}
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.debug-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentTab = btn.dataset.tab;
+        renderPrompt(prompts);
+        document.querySelectorAll('.debug-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === currentTab));
+      });
+    });
+
+    renderPrompt(prompts);
+  }
+
+  function renderPrompt(prompts) {
+    const el = document.getElementById('debug-prompt');
+    if (!el || !prompts[currentTab]) return;
+    el.textContent = prompts[currentTab].prompt;
+  }
+
+  // Poll for input field to exist (the grid renders it dynamically)
+  let polls = 0;
+  const poller = setInterval(() => {
+    const nameEl = document.getElementById('ig2-name');
+    if (nameEl) {
+      nameEl.addEventListener('input',  refreshDebug);
+      document.getElementById('ig2-cat')?.addEventListener('change',  refreshDebug);
+      document.getElementById('ig2-feats')?.addEventListener('input', refreshDebug);
+      clearInterval(poller);
+    }
+    if (++polls > 200) clearInterval(poller);
+  }, 100);
+
+  // Re-attach after any grid re-render
+  const origRender = grid._render.bind(grid);
+  grid._render = function () {
+    origRender();
+    setTimeout(() => {
+      const n = document.getElementById('ig2-name');
+      if (n) {
+        n.addEventListener('input',  refreshDebug);
+        document.getElementById('ig2-cat')?.addEventListener('change',  refreshDebug);
+        document.getElementById('ig2-feats')?.addEventListener('input', refreshDebug);
+      }
+    }, 60);
+  };
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Retlify — Benefits</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#F2F3F7;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sb{width:240px;background:#111827;min-height:100vh;position:fixed;top:0;left:0;z-index:30;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.05)}
+.sb-logo{padding:18px 18px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb-logo-icon{width:32px;height:32px;border-radius:8px;background:#FFD23F;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:16px;color:#111827;flex-shrink:0}
+.sb-logo-name{font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.sb-section{padding:10px 12px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1.2px}
+.nav{display:flex;align-items:center;gap:9px;padding:9px 12px;margin:1px 8px;border-radius:8px;font-size:13.5px;font-weight:500;color:rgba(255,255,255,.5);cursor:pointer;transition:all .15s;text-decoration:none;position:relative}
+.nav:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav.active{background:rgba(255,210,63,.13);color:#FFD23F;font-weight:600}
+.nav-ico{font-size:15px;width:18px;text-align:center;flex-shrink:0;opacity:.7}
+.nav.active .nav-ico{opacity:1}
+.soon{font-size:10px;font-weight:700;background:rgba(255,210,63,.18);color:#FFD23F;border-radius:20px;padding:2px 7px;margin-left:auto}
+.sb-bottom{padding:12px 14px;border-top:1px solid rgba(255,255,255,.05);margin-top:auto}
+.sb-user{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:background .15s;margin-bottom:8px}
+.sb-user:hover{background:rgba(255,255,255,.05)}
+.av-sb{width:30px;height:30px;border-radius:7px;background:#FFD23F;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:12px;color:#111827;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:#fff}
+.sb-uemail{font-size:11px;color:rgba(255,255,255,.35)}
+.logout-btn{width:100%;padding:9px;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.18);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.logout-btn:hover{background:rgba(239,68,68,.2)}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.topbar{background:#fff;border-bottom:1px solid #E5E7EB;padding:13px 26px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
+.srch-wrap{position:relative;flex:1;max-width:380px}
+.srch-inp{width:100%;padding:9px 14px 9px 38px;background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:10px;font-size:14px;color:#374151;outline:none;transition:all .2s;font-family:'DM Sans',sans-serif}
+.srch-inp:focus{border-color:#FFD23F;background:#fff;box-shadow:0 0 0 3px rgba(255,210,63,.12)}
+.srch-inp::placeholder{color:#9CA3AF}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.notif-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;color:#6B7280}
+.av-top{width:34px;height:34px;border-radius:9px;background:#FFD23F;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:13px;color:#111827;cursor:pointer}
+
+/* ── CONTENT ── */
+.content{padding:28px 32px 48px;flex:1;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HERO BANNER ── */
+.hero-banner{background:linear-gradient(135deg,#111827 0%,#1f2937 60%,#0f172a 100%);border-radius:20px;padding:44px 48px;margin-bottom:32px;position:relative;overflow:hidden}
+.hero-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,210,63,.07);pointer-events:none}
+.hero-banner::after{content:'';position:absolute;bottom:-60px;left:30%;width:300px;height:300px;border-radius:50%;background:rgba(255,210,63,.04);pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(255,210,63,.15);border:1px solid rgba(255,210,63,.25);border-radius:20px;padding:5px 13px;font-size:11.5px;font-weight:700;color:#FFD23F;text-transform:uppercase;letter-spacing:1px;margin-bottom:18px}
+.hero-headline{font-family:'Outfit',sans-serif;font-size:36px;font-weight:900;color:#fff;letter-spacing:-.8px;line-height:1.15;margin-bottom:14px;max-width:600px}
+.hero-headline span{color:#FFD23F}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.55);line-height:1.7;max-width:580px}
+.hero-pills{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.hero-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.65)}
+.hero-pill span{font-size:14px}
+
+/* ── SECTION LABEL ── */
+.section-label{display:flex;align-items:center;gap:10px;margin-bottom:18px;margin-top:4px}
+.section-label-bar{width:4px;height:22px;background:#FFD23F;border-radius:4px;flex-shrink:0}
+.section-label-text{font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;color:#111827;text-transform:uppercase;letter-spacing:1.2px}
+.section-label-count{font-size:11px;font-weight:700;background:#F3F4F6;color:#6B7280;border-radius:20px;padding:2px 9px}
+
+/* ── AUDIENCE HEADER CARD ── */
+.audience-header{border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.audience-header.shopkeeper{background:linear-gradient(135deg,#111827,#1e293b)}
+.audience-header.customer{background:linear-gradient(135deg,#18181b,#27272a)}
+.ah-title{font-family:'Outfit',sans-serif;font-size:20px;font-weight:900;color:#fff;letter-spacing:-.3px;line-height:1.25;max-width:480px}
+.ah-badge{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:13px;font-size:26px;flex-shrink:0}
+.ah-badge.shopkeeper{background:rgba(255,210,63,.15);border:1px solid rgba(255,210,63,.25)}
+.ah-badge.customer{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.25)}
+
+/* ── BENEFIT CARDS GRID ── */
+.benefit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:32px}
+.bcard{background:#fff;border-radius:14px;padding:22px 22px 20px;border:1.5px solid #EBEBEB;transition:all .22s;position:relative;overflow:hidden}
+.bcard::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:#FFD23F;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.bcard:hover{box-shadow:0 8px 28px rgba(0,0,0,.08);transform:translateY(-3px);border-color:#e5e7eb}
+.bcard:hover::after{transform:scaleX(1)}
+.bcard.customer-card::after{background:#6366f1}
+.bcard-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.bcard-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;background:#FFFBEB;border:1px solid rgba(255,210,63,.2)}
+.bcard-icon.customer-icon{background:#EEF2FF;border-color:rgba(99,102,241,.2)}
+.bcard-num{font-family:'Outfit',sans-serif;font-size:11px;font-weight:800;color:#9CA3AF;letter-spacing:.5px;margin-bottom:3px}
+.bcard-title{font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:#111827;letter-spacing:-.2px;line-height:1.3}
+.bcard-body{font-size:13.5px;color:#6B7280;line-height:1.65}
+.bcard-body p+p{margin-top:6px}
+
+/* ── POWER STATEMENT ── */
+.power-section{background:linear-gradient(135deg,#111827 0%,#0f172a 100%);border-radius:20px;padding:40px 44px;margin-bottom:32px;text-align:center;position:relative;overflow:hidden}
+.power-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,210,63,.07) 0%,transparent 65%);pointer-events:none}
+.power-stat{font-family:'Outfit',sans-serif;font-size:56px;font-weight:900;color:#FFD23F;letter-spacing:-2px;line-height:1;margin-bottom:10px}
+.power-line1{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:6px}
+.power-line2{font-size:15px;color:rgba(255,255,255,.45);line-height:1.6;max-width:480px;margin:0 auto}
+.power-divider{width:40px;height:3px;background:#FFD23F;border-radius:3px;margin:20px auto}
+
+/* ── CTA SECTION ── */
+.cta-section{background:#fff;border-radius:20px;padding:36px 44px;border:1.5px solid #EBEBEB;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.cta-text-block{}
+.cta-title{font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;color:#111827;letter-spacing:-.4px;margin-bottom:6px}
+.cta-sub{font-size:14px;color:#6B7280;line-height:1.6}
+.cta-btn{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;background:#FFD23F;color:#111827;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap;text-decoration:none;flex-shrink:0}
+.cta-btn:hover{background:#f5c800;transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,210,63,.4)}
+.cta-btn:active{transform:translateY(0)}
+.cta-btn svg{transition:transform .2s}
+.cta-btn:hover svg{transform:translateX(3px)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sb{display:none}
+  .main{margin-left:0}
+  .hero-headline{font-size:26px}
+  .power-stat{font-size:42px}
+  .cta-section{flex-direction:column;text-align:center;padding:28px 24px}
+  .content{padding:20px 18px 48px}
+  .benefit-grid{grid-template-columns:1fr}
+  .audience-header{flex-direction:column;text-align:center;gap:14px}
+  .hero-banner{padding:28px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<div class="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">R</div>
+    <span class="sb-logo-name">Retlify</span>
+  </div>
+  <nav style="padding:8px 0;flex:1;overflow-y:auto">
+    <div class="sb-section">MAIN</div>
+    <a class="nav" href="dashboard.html#home"><span class="nav-ico">🏠</span>Home</a>
+    <a class="nav active" href="dashboard.html#benefits"><span class="nav-ico">⭐</span>Benefits</a>
+    <a class="nav" href="dashboard.html#survey"><span class="nav-ico">📋</span>Survey</a>
+    <div class="sb-section">OTHER</div>
+    <a class="nav"><span class="nav-ico">📱</span>App<span class="soon">Soon</span></a>
+    <a class="nav" href="dashboard.html#contact"><span class="nav-ico">✉️</span>Contact</a>
+    <a class="nav" href="dashboard.html#settings"><span class="nav-ico">⚙️</span>Settings</a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="av-sb">U</div>
+      <div style="flex:1;min-width:0">
+        <div class="sb-uname">Your Name</div>
+        <div class="sb-uemail">you@example.com</div>
+      </div>
+    </div>
+    <button class="logout-btn">Sign out</button>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="srch-wrap">
+      <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9CA3AF" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="srch-inp" type="text" placeholder="Search…"/>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn" aria-label="Notifications">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <div class="av-top">U</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ── SECTION 1: HERO ── -->
+    <div class="hero-banner">
+      <div class="hero-eyebrow">
+        <span>✦</span> Why Retlify
+      </div>
+      <h1 class="hero-headline">Built for Both <span>Retailers</span><br/>and Customers</h1>
+      <p class="hero-sub">Retlify creates a powerful connection between local shopkeepers and modern customers — saving time, reducing effort, and unlocking growth for everyone.</p>
+      <div class="hero-pills">
+        <div class="hero-pill"><span>🏪</span> Local Shopkeepers</div>
+        <div class="hero-pill"><span>🛍️</span> Smart Customers</div>
+        <div class="hero-pill"><span>📍</span> Nearby Discovery</div>
+        <div class="hero-pill"><span>⚡</span> Zero Complexity</div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: FOR SHOPKEEPERS ── -->
+    <div class="section-label">
+      <div class="section-label-bar"></div>
+      <div class="section-label-text">For Shopkeepers</div>
+      <div class="section-label-count">7 Benefits</div>
+    </div>
+
+    <div class="audience-header shopkeeper" style="margin-bottom:20px">
+      <div class="ah-title">Empowering Local Retailers to Go Digital — Without Complexity</div>
+      <div class="ah-badge shopkeeper">🏪</div>
+    </div>
+
+    <div class="benefit-grid">
+
+      <!-- 1 -->
+      <div class="bcard">
+        <div class="bcard-top">
+          <div class="bcard-icon">💡</div>
+          <div>
+            <div class="bcard-num">01 &nbsp;·&nbsp; NO WEBSITE REQUIRED</div>
+            <div class="bcard-title">No Expensive Website Required</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Shopkeepers don't need to spend thousands on building and maintaining a website.</p>
+          <p>With Retlify, your digital store is ready instantly — no developers, no technical knowledge, no maintenance costs.</p>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="bcard">
+        <div class="bcard-top">
+          <div class="bcard-icon">💸</div>
+          <div>
+            <div class="bcard-num">02 &nbsp;·&nbsp; ZERO MARKETING SPEND</div>
+            <div class="bcard-title">No Monthly Marketing Costs</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Forget spending money on ads every month.</p>
+          <p>Retlify connects you directly with nearby customers who are already searching for your products — reducing your dependency on paid marketing.</p>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="bcard">
+        <div class="bcard-top">
+          <div class="bcard-icon">📦</div>
+          <div>
+            <div class="bcard-num">03 &nbsp;·&nbsp; INVENTORY</div>
+            <div class="bcard-title">Digital Inventory Management</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Manage all your products digitally.</p>
+          <p>Update prices, stock, and product details in real-time without manual work. No more confusion or outdated information.</p>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="bcard">
+        <div class="bcard-top">
+          <div class="bcard-icon">🧠</div>
+          <div>
+            <div class="bcard-num">04 &nbsp;·&nbsp; SMART CATALOG</div>
+            <div class="bcard-title">Stop Showing Products Manually</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Instead of taking out multiple products for every customer, simply show your digital catalog.</p>
+          <p>Save time, reduce effort, and serve more customers efficiently.</p>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="bcard">
+        <div class="bcard-top">
+          <div class="bcard-icon">📍</div>
+          <div>
+            <div class="bcard-num">05 &nbsp;·&nbsp; LOCAL VISIBILITY</div>
+            <div class="bcard-title">Get Discovered by Nearby Customers</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Your shop becomes visible to customers searching for products in your area.</p>
+          <p>Increase walk-ins without extra effort.</p>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="bcard">
+        <div class="bcard-top">
+          <div class="bcard-icon">📊</div>
+          <div>
+            <div class="bcard-num">06 &nbsp;·&nbsp; MARKET INSIGHTS</div>
+            <div class="bcard-title">Understand Market Demand</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Get insights into what customers are searching for.</p>
+          <p>Make smarter business decisions based on real demand — not guesswork.</p>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="bcard">
+        <div class="bcard-top">
+          <div class="bcard-icon">🚀</div>
+          <div>
+            <div class="bcard-num">07 &nbsp;·&nbsp; GROWTH</div>
+            <div class="bcard-title">Grow Without Complexity</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Retlify gives you the power of digital business without the complexity of managing an online store.</p>
+          <p>Simple, fast, and built for real shopkeepers.</p>
+        </div>
+      </div>
+
+    </div><!-- /benefit-grid shopkeepers -->
+
+    <!-- ── SECTION 3: FOR CUSTOMERS ── -->
+    <div class="section-label" style="margin-top:8px">
+      <div class="section-label-bar" style="background:#6366f1"></div>
+      <div class="section-label-text">For Customers</div>
+      <div class="section-label-count">7 Benefits</div>
+    </div>
+
+    <div class="audience-header customer" style="margin-bottom:20px">
+      <div class="ah-title">Shop Smarter — Without Wasting Time or Energy</div>
+      <div class="ah-badge customer">🛍️</div>
+    </div>
+
+    <div class="benefit-grid">
+
+      <!-- 1 -->
+      <div class="bcard customer-card">
+        <div class="bcard-top">
+          <div class="bcard-icon customer-icon">⏳</div>
+          <div>
+            <div class="bcard-num">01 &nbsp;·&nbsp; TIME SAVING</div>
+            <div class="bcard-title">Save Hours of Time</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>No more visiting 5–10 shops just to compare products.</p>
+          <p>Find everything from your phone before stepping out.</p>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="bcard customer-card">
+        <div class="bcard-top">
+          <div class="bcard-icon customer-icon">🔍</div>
+          <div>
+            <div class="bcard-num">02 &nbsp;·&nbsp; DISCOVERY</div>
+            <div class="bcard-title">Discover Nearby Products Instantly</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Search for products and see which nearby shops have them available.</p>
+          <p>No more guessing or unnecessary travel.</p>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="bcard customer-card">
+        <div class="bcard-top">
+          <div class="bcard-icon customer-icon">💰</div>
+          <div>
+            <div class="bcard-num">03 &nbsp;·&nbsp; PRICE COMPARISON</div>
+            <div class="bcard-title">Compare Prices Easily</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Check prices across different shops without physically visiting each one.</p>
+          <p>Make better buying decisions with complete information.</p>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="bcard customer-card">
+        <div class="bcard-top">
+          <div class="bcard-icon customer-icon">🎨</div>
+          <div>
+            <div class="bcard-num">04 &nbsp;·&nbsp; BROWSE DESIGNS</div>
+            <div class="bcard-title">Explore Designs Before Visiting</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>View product options, styles, and designs from multiple shops in advance.</p>
+          <p>Choose what you like before you go.</p>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="bcard customer-card">
+        <div class="bcard-top">
+          <div class="bcard-icon customer-icon">📅</div>
+          <div>
+            <div class="bcard-num">05 &nbsp;·&nbsp; PRE-BOOKING</div>
+            <div class="bcard-title">Pre-Book Products</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Reserve items before visiting the store.</p>
+          <p>No risk of products going out of stock.</p>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="bcard customer-card">
+        <div class="bcard-top">
+          <div class="bcard-icon customer-icon">🤝</div>
+          <div>
+            <div class="bcard-num">06 &nbsp;·&nbsp; TRUSTED PURCHASE</div>
+            <div class="bcard-title">Trusted Offline Purchase</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Enjoy the trust and confidence of buying offline — after checking everything online.</p>
+          <p>Best of both worlds.</p>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="bcard customer-card">
+        <div class="bcard-top">
+          <div class="bcard-icon customer-icon">💛</div>
+          <div>
+            <div class="bcard-num">07 &nbsp;·&nbsp; LOCAL SUPPORT</div>
+            <div class="bcard-title">Support Local Businesses</div>
+          </div>
+        </div>
+        <div class="bcard-body">
+          <p>Shop from nearby stores instead of large marketplaces.</p>
+          <p>Support your local economy while getting better convenience.</p>
+        </div>
+      </div>
+
+    </div><!-- /benefit-grid customers -->
+
+    <!-- ── SECTION 4: POWER STATEMENT ── -->
+    <div class="power-section">
+      <div class="power-stat">90%</div>
+      <div class="power-line1">of shopping in India still happens offline.</div>
+      <div class="power-divider"></div>
+      <div class="power-line2">Retlify is bringing the power of online discovery to offline retail.</div>
+    </div>
+
+    <!-- ── SECTION 5: CTA ── -->
+    <div class="cta-section">
+      <div class="cta-text-block">
+        <div class="cta-title">Be part of the future of retail.</div>
+        <div class="cta-sub">Join Retlify today and connect with thousands of local customers in your area.</div>
+      </div>
+      <a class="cta-btn" href="signup.html">
+        Join Retailers
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+      </a>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// Animate benefit cards on scroll
+const cards = document.querySelectorAll('.bcard');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }, i * 60);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+cards.forEach(card => {
+  card.style.opacity = '0';
+  card.style.transform = 'translateY(18px)';
+  card.style.transition = 'opacity .4s ease, transform .4s ease, box-shadow .22s, border-color .22s';
+  observer.observe(card);
+});
+
+// Topbar search
+document.querySelector('.srch-inp').addEventListener('keydown', e => {
+  if (e.key === 'Enter') e.target.blur();
+});
+</script>
+</body>
+</html>

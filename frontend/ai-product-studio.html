@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Product Studio — Retlify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js" crossorigin></script>
+<script src="https://js.puter.com/v2/"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070d;--surface:#0e0e18;--panel:#131320;
+  --border:#1c1c2e;--border2:#252538;
+  --accent:#7c6af7;--accent2:#c084fc;--accent3:#38bdf8;
+  --gold:#f0b429;--text:#e8e8f0;--muted:#6b6b8a;
+  --success:#34d399;--error:#f87171;
+  --radius:16px;--radius-lg:20px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+header{position:sticky;top:0;z-index:100;background:rgba(7,7,13,.92);backdrop-filter:blur(28px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-badge{font-size:.7rem;font-weight:600;letter-spacing:.08em;background:rgba(124,106,247,.15);color:var(--accent2);border:1px solid rgba(124,106,247,.3);padding:.25rem .7rem;border-radius:99px}
+.layout{position:relative;z-index:1;display:grid;grid-template-columns:360px 1fr;gap:2rem;max-width:1400px;margin:0 auto;padding:2rem 2rem 5rem}
+
+/* ══ MOBILE THREE-DOT MENU BUTTON ══ */
+.mob-menu-btn{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--border2);background:rgba(255,255,255,.04);cursor:pointer;transition:all .2s;flex-shrink:0}
+.mob-menu-btn:hover{background:rgba(124,106,247,.12);border-color:rgba(124,106,247,.3)}
+.mob-menu-btn svg{width:20px;height:20px;color:var(--text)}
+
+/* ══ MOBILE SIDEBAR DRAWER ══ */
+.drawer-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;transition:opacity .3s}
+.drawer-overlay.open{opacity:1}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(340px,88vw);z-index:201;background:var(--panel);border-right:1px solid var(--border);transform:translateX(-100%);transition:transform .32s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding:1.25rem 1.1rem 3rem}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
+.drawer-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.drawer-close{width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .15s}
+.drawer-close:hover{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--error)}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;padding:1rem .85rem 3.5rem;gap:1.1rem}
+  header{padding:0 1rem}
+  /* Hide sidebar panel in layout — it lives in the drawer on mobile */
+  .layout > aside.panel{display:none}
+  .mob-menu-btn{display:flex}
+  .drawer-overlay{display:block}
+  /* Hero tighter on mobile */
+  .hero{padding:1.4rem 1.25rem}
+  .hero-title{font-size:clamp(1.35rem,6vw,1.9rem)}
+  .hero-sub{font-size:.85rem}
+  /* Coming soon card tighter on mobile */
+  .cs-card{padding:2rem 1.25rem}
+  .cs-features{grid-template-columns:1fr 1fr}
+  .cs-title{font-size:clamp(1.2rem,5vw,1.75rem)}
+  .orb-stage{width:110px;height:110px;margin-bottom:1.4rem}
+  /* Right col spacing */
+  .right-col{gap:1rem}
+  /* Pills wrap nicely */
+  .pills{gap:.4rem}
+  .pill{font-size:.65rem;padding:.25rem .6rem}
+  /* Toast position on mobile */
+  .toast-wrap{bottom:1.25rem;right:.75rem;left:.75rem}
+  .toast{max-width:100%}
+  /* FAB repositioned for mobile */
+  .ai-fab{bottom:1.25rem;left:1.25rem;width:50px;height:50px}
+  /* Inspector full width */
+  .inspector-wrap{width:100%}
+  /* Attr grid single col on very small */
+}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;height:fit-content;position:sticky;top:80px}
+.panel-title{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:1.2rem}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:2rem 1.5rem;text-align:center;cursor:pointer;background:rgba(124,106,247,.03);transition:all .25s}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(124,106,247,.09);transform:translateY(-2px)}
+.upload-icon{width:52px;height:52px;margin:0 auto 1rem;background:linear-gradient(135deg,rgba(124,106,247,.2),rgba(192,132,252,.2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.upload-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.35rem}
+.upload-sub{font-size:.8rem;color:var(--muted);line-height:1.5}
+.preview-wrap{margin-top:1.2rem;border-radius:var(--radius);overflow:hidden;position:relative;aspect-ratio:4/3;border:1px solid var(--border2)}
+.preview-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.preview-badge{position:absolute;bottom:.6rem;left:.6rem;font-size:.7rem;font-weight:600;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);color:var(--success);padding:.3rem .65rem;border-radius:8px;border:1px solid rgba(52,211,153,.25)}
+.analysis-box{margin-top:1.2rem;background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.2);border-radius:var(--radius);padding:1rem}
+.attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+.attr-chip{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.5rem .75rem;transition:all .2s}
+.attr-chip:hover{border-color:var(--border2);background:rgba(255,255,255,.06)}
+.attr-label{font-size:.65rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.attr-val{font-size:.8rem;font-weight:500;text-transform:capitalize;color:var(--text)}
+.confidence{margin-top:.6rem;font-size:.68rem;color:var(--muted);text-align:center}
+.hint{display:flex;align-items:flex-start;gap:.5rem;font-size:.72rem;color:var(--muted);margin-top:.85rem;padding:.65rem .9rem;background:rgba(255,255,255,.025);border-radius:10px;border:1px solid var(--border);line-height:1.55}
+.right-col{display:flex;flex-direction:column;gap:1.5rem}
+.hero{background:linear-gradient(135deg,rgba(124,106,247,.1),rgba(192,132,252,.05),rgba(56,189,248,.04));border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem 2.5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(124,106,247,.15) 0%,transparent 70%);pointer-events:none}
+.hero-label{font-size:.72rem;font-weight:600;letter-spacing:.12em;color:var(--accent2);text-transform:uppercase;margin-bottom:.6rem}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:.7rem}
+.hero-title span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:.9rem;color:var(--muted);line-height:1.65;max-width:480px}
+.pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem}
+.pill{font-size:.7rem;font-weight:600;padding:.3rem .75rem;border-radius:99px;border:1px solid;transition:all .2s}
+.pill-p{background:rgba(124,106,247,.12);border-color:rgba(124,106,247,.3);color:var(--accent2)}
+.pill-g{background:rgba(240,180,41,.1);border-color:rgba(240,180,41,.3);color:var(--gold)}
+.pill-s{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:var(--success)}
+.pill-b{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:var(--accent3)}
+
+/* ══ VIRTUAL TRY-ON COMING SOON CARD ══ */
+.cs-wrapper{position:relative;border-radius:var(--radius-lg);padding:2px;background:linear-gradient(135deg,rgba(250,204,21,.7),rgba(234,179,8,.5),rgba(251,191,36,.4),rgba(250,204,21,.6));background-size:300% 300%;animation:gradShift 6s ease infinite}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.cs-card{background:linear-gradient(145deg,#09090f,#0b0b14,rgba(10,9,5,.98));border-radius:calc(var(--radius-lg) - 2px);padding:3rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+
+/* Background ambient glows */
+.cs-orbs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.cs-orb1{position:absolute;top:-60px;left:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(250,204,21,.12) 0%,transparent 65%);animation:obf1 9s ease-in-out infinite}
+.cs-orb2{position:absolute;bottom:-40px;right:-40px;width:240px;height:240px;background:radial-gradient(circle,rgba(234,179,8,.1) 0%,transparent 65%);animation:obf2 11s ease-in-out infinite}
+.cs-orb3{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(250,204,21,.04) 0%,transparent 70%);animation:obp 8s ease-in-out infinite}
+@keyframes obf1{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,22px)}}
+@keyframes obf2{0%,100%{transform:translate(0,0)}50%{transform:translate(-14px,-20px)}}
+@keyframes obp{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}}
+
+/* Floating Orb Animation */
+.orb-stage{width:140px;height:140px;margin:0 auto 2rem;position:relative;display:flex;align-items:center;justify-content:center}
+.orb-float{animation:orbFloat 5s ease-in-out infinite}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-14px) scale(1.03)}}
+.orb-outer{position:relative;width:88px;height:88px}
+
+/* Outer orbit rings */
+.orb-ring{position:absolute;inset:-22px;border-radius:50%;border:1px solid rgba(250,204,21,.2);animation:ringRot 12s linear infinite}
+.orb-ring::before{content:'';position:absolute;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#facc15,#eab308);top:-4.5px;left:50%;transform:translateX(-50%);box-shadow:0 0 16px #facc15,0 0 32px rgba(250,204,21,.6)}
+.orb-ring2{position:absolute;inset:-38px;border-radius:50%;border:1px solid rgba(250,204,21,.08);animation:ringRot 20s linear infinite reverse}
+.orb-ring2::before{content:'';position:absolute;width:6px;height:6px;border-radius:50%;background:#eab308;bottom:-3px;left:30%;transform:translateX(-50%);box-shadow:0 0 10px #eab308,0 0 20px rgba(234,179,8,.4)}
+
+/* Core glowing orb */
+.orb-core{width:88px;height:88px;border-radius:50%;background:conic-gradient(from 0deg,#facc15,#eab308,#f59e0b,#fbbf24,#facc15);animation:orbSpin 10s linear infinite;position:relative;box-shadow:0 0 36px rgba(250,204,21,.55),0 0 70px rgba(250,204,21,.2),0 0 120px rgba(250,204,21,.08)}
+.orb-core::before{content:'';position:absolute;inset:8px;border-radius:50%;background:radial-gradient(circle at 35% 32%,rgba(255,255,255,.35) 0%,rgba(250,204,21,.4) 40%,rgba(7,7,13,.9) 100%);animation:innerPulse 4s ease-in-out infinite}
+.orb-core::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1.5px solid rgba(250,204,21,.15);animation:ringRot 7s linear infinite reverse}
+@keyframes orbSpin{to{filter:hue-rotate(30deg) brightness(1.05)}}
+@keyframes ringRot{to{transform:rotate(360deg)}}
+@keyframes innerPulse{0%,100%{opacity:.75}50%{opacity:1}}
+
+/* Badge */
+.cs-badge{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,rgba(250,204,21,.2),rgba(234,179,8,.12));border:1px solid rgba(250,204,21,.4);color:#facc15;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem .9rem;border-radius:99px;margin-bottom:1.5rem;position:relative;z-index:1}
+.cs-badge-dot{width:6px;height:6px;border-radius:50%;background:#facc15;box-shadow:0 0 8px #facc15;animation:bdPulse 1.8s ease-in-out infinite}
+@keyframes bdPulse{0%,100%{box-shadow:0 0 4px rgba(250,204,21,.8)}50%{box-shadow:0 0 14px rgba(250,204,21,.4),0 0 0 5px transparent}}
+.cs-title{font-family:'Syne',sans-serif;font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;letter-spacing:-.025em;margin-top:1rem;margin-bottom:.6rem;position:relative;z-index:1;line-height:1.2}
+.cs-title-grad{background:linear-gradient(135deg,#fff 20%,#facc15 60%,#eab308);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cs-sub{font-size:.95rem;color:var(--muted);line-height:1.65;max-width:480px;margin:0 auto 1.75rem;position:relative;z-index:1}
+.cs-message{background:rgba(250,204,21,.05);border:1px solid rgba(250,204,21,.15);border-radius:12px;padding:1rem 1.25rem;font-size:.82rem;color:rgba(232,232,240,.72);line-height:1.65;margin-bottom:2rem;text-align:left;position:relative;z-index:1}
+.cs-msg-icon{display:flex;align-items:center;gap:.4rem;font-weight:600;color:#facc15;margin-bottom:.4rem;font-size:.78rem}
+.cs-features{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:2rem;position:relative;z-index:1}
+@media(max-width:640px){.cs-features{grid-template-columns:1fr}.attr-grid{grid-template-columns:1fr 1fr}}
+.cs-feat{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:12px;padding:1rem .85rem;transition:all .25s}
+.cs-feat:hover{background:rgba(250,204,21,.06);border-color:rgba(250,204,21,.25);transform:translateY(-3px)}
+.cs-feat-icon{font-size:1.35rem;margin-bottom:.45rem}
+.cs-feat-name{font-size:.78rem;font-weight:600;font-family:'Syne',sans-serif;color:var(--text);margin-bottom:.2rem}
+.cs-feat-desc{font-size:.7rem;color:var(--muted);line-height:1.4}
+
+/* Waitlist / Notify button — YELLOW */
+.wl-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem;position:relative;z-index:1}
+.wl-btn{display:inline-flex;align-items:center;gap:.6rem;height:52px;padding:0 2rem;border:none;border-radius:99px;background:linear-gradient(135deg,#facc15,#eab308);color:#0a0800;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.03em;cursor:pointer;box-shadow:0 4px 28px rgba(250,204,21,.4),0 2px 8px rgba(0,0,0,.4);transition:all .25s;position:relative;overflow:hidden}
+.wl-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent);opacity:0;transition:opacity .25s}
+.wl-btn:hover::before{opacity:1}
+.wl-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 40px rgba(250,204,21,.6),0 4px 12px rgba(0,0,0,.4)}
+.wl-sub{font-size:.73rem;color:var(--muted)}
+.wl-sub strong{color:#facc15}
+.wl-email-row{display:none;align-items:center;gap:.5rem;width:100%;max-width:380px}
+.wl-email-row.show{display:flex;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wl-inp{flex:1;height:48px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:12px;padding:0 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:all .2s}
+.wl-inp:focus{border-color:rgba(250,204,21,.5);background:rgba(250,204,21,.04);box-shadow:0 0 0 3px rgba(250,204,21,.1)}
+.wl-inp::placeholder{color:var(--muted)}
+.wl-submit{height:48px;padding:0 1.25rem;border:none;border-radius:12px;background:linear-gradient(135deg,#facc15,#eab308);color:#0a0800;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap}
+.wl-submit:hover{filter:brightness(1.1);transform:translateY(-1px)}
+
+/* ══ YELLOW AI FLOATING BUTTON ══ */
+.ai-fab{position:fixed;bottom:2rem;left:2rem;z-index:9990;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#facc15 0%,#eab308 100%);box-shadow:0 4px 24px rgba(250,204,21,.45),0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;transition:transform .25s,box-shadow .25s;outline:none}
+.ai-fab:hover{transform:scale(1.12);box-shadow:0 6px 36px rgba(250,204,21,.65),0 3px 12px rgba(0,0,0,.5)}
+.ai-fab:active{transform:scale(.96)}
+.ai-fab svg{width:26px;height:26px;color:#0a0800}
+
+/* Prompt Inspector */
+.inspector-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.inspector-toggle{width:100%;background:transparent;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-weight:600;font-size:.85rem;padding:1rem 1.2rem;cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:background .2s}
+.inspector-toggle:hover{background:rgba(255,255,255,.025)}
+.inspector-body{border-top:1px solid var(--border);padding:1rem 1.2rem}
+.ins-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem}
+.ins-tab{padding:.3rem .75rem;border-radius:99px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:.72rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.4rem;font-family:'DM Sans',sans-serif;transition:all .15s}
+.ins-tab.active{background:rgba(124,106,247,.15);border-color:rgba(124,106,247,.3);color:var(--accent2)}
+.prompt-text{font-size:.72rem;color:var(--muted);line-height:1.7;font-family:'Courier New',monospace;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;word-break:break-word;white-space:pre-wrap;max-height:150px;overflow-y:auto}
+.neg-text{margin-top:.5rem;font-size:.68rem;color:var(--muted);opacity:.7}
+
+/* Toasts */
+.toast-wrap{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.toast{padding:.75rem 1.1rem;border-radius:12px;font-size:.82rem;font-weight:500;display:flex;align-items:center;gap:.55rem;max-width:340px;animation:slideIn .3s ease;line-height:1.4}
+.toast-info{background:rgba(124,106,247,.2);border:1px solid rgba(124,106,247,.4);color:var(--accent2)}
+.toast-success{background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.35);color:var(--success)}
+.toast-error{background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.3);color:var(--error)}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.spn{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .7s linear infinite;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+'use strict';
+const { useState, useCallback, useRef } = React;
+
+/* analyzeImage — preserved logic */
+const LABEL_MAP = {tshirt:'t-shirt',tee:'t-shirt',jersey:'t-shirt',shirt:'shirt',polo:'shirt',jeans:'jeans',denim:'jeans',trouser:'trousers',pant:'trousers',chino:'trousers',slacks:'trousers',short:'shorts',bermuda:'shorts',dress:'dress',gown:'dress',frock:'dress',skirt:'skirt',lehenga:'lehenga',kurti:'kurti',kurta:'kurti',salwar:'kurti',churidar:'kurti',saree:'saree',sari:'saree',jacket:'jacket',coat:'jacket',windbreaker:'jacket',parka:'jacket',hoodie:'hoodie',sweatshirt:'hoodie',pullover:'hoodie',blazer:'suit',suit:'suit',tuxedo:'suit',sweater:'sweater',cardigan:'sweater',knit:'sweater',shoe:'shoes',sneaker:'sneakers',trainer:'sneakers',boot:'boots',heel:'heels',pump:'heels',stiletto:'heels',sandal:'sandals',slipper:'sandals',chappal:'sandals',mojari:'sandals',flip:'sandals',loafer:'shoes',oxford:'shoes',bag:'bag',handbag:'bag',purse:'bag',tote:'bag',clutch:'bag',satchel:'bag',backpack:'backpack',rucksack:'backpack',watch:'watch',timepiece:'watch',sunglasses:'sunglasses',sunglass:'sunglasses',glasses:'sunglasses',cap:'cap',hat:'cap',beanie:'cap',turban:'cap',necklace:'jewellery',ring:'jewellery',bracelet:'jewellery',earring:'jewellery',pendant:'jewellery',bangle:'jewellery',phone:'phone',smartphone:'phone',mobile:'phone',iphone:'phone',android:'phone',laptop:'laptop',notebook:'laptop',macbook:'laptop',tablet:'tablet',ipad:'tablet',headphone:'headphones',earphone:'headphones',headset:'headphones',earbud:'earbuds',airpod:'earbuds',tws:'earbuds',camera:'camera',dslr:'camera',tv:'tv',television:'tv',monitor:'tv',refrigerator:'appliance',fridge:'appliance',microwave:'appliance',oven:'appliance',mixer:'appliance',blender:'appliance',appliance:'appliance',sofa:'furniture',couch:'furniture',chair:'furniture',table:'furniture',furniture:'furniture',lipstick:'beauty',perfume:'beauty',cream:'beauty',serum:'beauty',makeup:'beauty'};
+const COLOR_MAP = {black:'black',white:'white',red:'red',blue:'blue',green:'green',yellow:'yellow',orange:'orange',pink:'pink',purple:'purple',brown:'brown',grey:'grey',gray:'grey',beige:'beige',navy:'navy blue',maroon:'maroon',cream:'cream',gold:'golden',silver:'silver',turquoise:'turquoise',cyan:'cyan',magenta:'magenta',violet:'violet',indigo:'indigo',coral:'coral',teal:'teal',olive:'olive',lime:'lime green',lavender:'lavender',rust:'rust',mustard:'mustard yellow',burgundy:'burgundy',charcoal:'charcoal',ivory:'ivory',khaki:'khaki',lal:'red',neela:'blue',nila:'blue',hara:'green',pila:'yellow',peela:'yellow',kala:'black',safed:'white',gul:'pink',gulabi:'pink'};
+const PATTERN_MAP = {striped:['stripe','stripes','striped','pinstripe','lines'],printed:['print','printed','floral','flower','geometric','graphic','pattern','motif','abstract','animal','tropical'],checkered:['check','checkered','plaid','tartan','gingham'],embroidered:['embroid','zari','thread','work','ethnic','block','handwork','kutch','phulkari','mirror'],polka:['polka','dot','dots','spotted'],camouflage:['camo','camouflage','military']};
+const MATERIAL_MAP = {shoes:'leather and rubber sole',sneakers:'mesh and rubber',boots:'genuine leather',sandals:'leather and rubber',heels:'leather and synthetic','t-shirt':'100% cotton jersey',shirt:'cotton and polyester blend',jeans:'100% denim cotton',saree:'silk and cotton',kurti:'cotton and polyester',lehenga:'embroidered silk fabric',dress:'polyester and cotton blend',skirt:'cotton and polyester',jacket:'polyester and leather',hoodie:'fleece and cotton',suit:'wool and polyester blend',sweater:'wool and acrylic',shorts:'cotton and polyester',trousers:'polyester blend',bag:'leather and canvas',backpack:'nylon and polyester',watch:'stainless steel and glass',sunglasses:'acetate and metal',phone:'glass and aluminum',laptop:'aluminum chassis',tablet:'aluminum and glass',headphones:'plastic and metal',earbuds:'plastic and silicone',jewellery:'precious metal and stone',cap:'cotton and polyester',appliance:'stainless steel and plastic',furniture:'wood and fabric',beauty:'glass and premium plastic'};
+function analyzeImage(file) {
+  const raw = ((file && file.name) || 'product').toLowerCase();
+  const name = raw.replace(/[-_.()[\]]/g,' ').replace(/\s+/g,' ').trim();
+  let category = 'product', confidence = 0.4;
+  for (const [kw,cat] of Object.entries(LABEL_MAP)) { if (name.includes(kw)) { category=cat; confidence=0.82; break; } }
+  let color = 'multicolor';
+  for (const [kw,col] of Object.entries(COLOR_MAP)) { if (name.includes(kw)) { color=col; break; } }
+  let pattern = 'solid';
+  for (const [pat,words] of Object.entries(PATTERN_MAP)) { if (words.some(w=>name.includes(w))) { pattern=pat; break; } }
+  const material = MATERIAL_MAP[category] || 'quality material';
+  return { category, color, pattern, material, confidence };
+}
+
+/* buildPrompts — preserved, gated from UI */
+const QUALITY = 'photorealistic, professional photography, 8K ultra-high resolution, sharp focus, high detail, award-winning commercial product shot, perfect lighting, no grain, no noise';
+const NEGATIVE = 'no buildings, no city skyline, no architecture, no landscape, no roads, no abstract art, no nature, no trees, no sky, no vehicles, no cars, no watermark, no text overlay, no logo, no blur, no overexposure, no cartoon, no illustration, no 3D render, no painting, no CGI, no distortion, no duplicate objects, no background clutter, no amateur photography, no low resolution, no extra limbs';
+function buildPrompts({ category='product', color='multicolor', pattern='solid', material='quality material' }) {
+  const colorPart=color!=='multicolor'?color+' colored ':'', patternPart=pattern!=='solid'?pattern+' patterned ':'', matPart=material!=='quality material'?', made of '+material:'';
+  const desc=colorPart+patternPart+category+matPart, same='same exact '+desc+', identical design, same color, same pattern, same product';
+  return [
+    {type:'studio',label:'Studio Shot',desc:'Clean product photography',color:'#818cf8',prompt:'ecommerce product photo of a '+desc+', pure white background, product centered perfectly, professional studio softbox lighting, front-facing catalog view, clean sharp edges, Amazon listing style hero shot, '+QUALITY,negative:NEGATIVE+', model, person, hands'},
+    {type:'model',label:'Model Shot',desc:'Worn/used by model',color:'#34d399',prompt:'fashion model wearing '+same+', natural confident editorial pose, clean minimalist studio backdrop, professional studio lighting, full body fashion editorial style, '+QUALITY,negative:NEGATIVE+', wrong product'},
+    {type:'lifestyle',label:'Lifestyle Shot',desc:'Real-world context',color:'#f59e0b',prompt:desc+' in modern lifestyle aspirational setting, lifestyle product photography, ambient warm natural golden hour lighting, editorial depth-of-field, '+same+', '+QUALITY,negative:NEGATIVE+', unrealistic scene'},
+    {type:'editorial',label:'Editorial Shot',desc:'Magazine style',color:'#f472b6',prompt:'luxury premium editorial campaign photo of a '+desc+', Vogue magazine fashion spread aesthetic, dramatic cinematic moody studio lighting, sophisticated color grading, '+same+', '+QUALITY,negative:NEGATIVE+', amateur, casual'},
+  ];
+}
+
+/* imageService functions preserved — generation gated by UI */
+const SEEDS = { studio:42, model:73, lifestyle:91, editorial:17 };
+let _puterPromise = null;
+function _loadPuter() { if(_puterPromise)return _puterPromise; _puterPromise=new Promise((resolve,reject)=>{if(typeof window.puter!=='undefined'&&window.puter&&window.puter.ai&&window.puter.ai.txt2img){return resolve(window.puter);}let attempts=0;const poll=setInterval(()=>{if(window.puter&&window.puter.ai&&window.puter.ai.txt2img){clearInterval(poll);resolve(window.puter);}if(++attempts>150){clearInterval(poll);reject(new Error('Puter.js unavailable'));}},100);}); return _puterPromise; }
+async function _tryPuter(prompt) { try{const puter=await _loadPuter();const result=await puter.ai.txt2img(prompt,false);if(!result)throw new Error('Empty');if(result&&result.src)return{url:result.src,source:'puter'};if(typeof result==='string'&&result.startsWith('http'))return{url:result,source:'puter'};if(result instanceof Blob)return{url:URL.createObjectURL(result),source:'puter'};if(result instanceof HTMLImageElement&&result.src)return{url:result.src,source:'puter'};throw new Error('Unknown');}catch(e){console.warn('[Puter]',e.message);return null;} }
+function _pollinationsUrl(prompt,seed){const safe=String(prompt||'').replace(/<[^>]+>/g,'').replace(/[\x00-\x1F]/g,'').slice(0,480).trim();return 'https://image.pollinations.ai/prompt/'+encodeURIComponent(safe)+'?width=768&height=768&seed='+seed+'&nologo=true&enhance=true&model=flux';}
+async function _tryPollinations(prompt,seed){try{const url=_pollinationsUrl(prompt,seed);await new Promise((res,rej)=>{const img=new Image();img.onload=res;img.onerror=rej;img.src=url;setTimeout(()=>rej(new Error('Timeout')),25000);});return{url,source:'pollinations'};}catch(e){console.warn('[Pollinations]',e.message);return null;}}
+function _picsumUrl(type,extra){return 'https://picsum.photos/seed/'+((SEEDS[type]||42)+(extra||0))+'/768/768';}
+async function _generateOne(promptObj,index){const seed=1000+index*419;const puter=await _tryPuter(promptObj.prompt);if(puter)return Object.assign({},promptObj,puter,{status:'done'});const poll=await _tryPollinations(promptObj.prompt,seed);if(poll)return Object.assign({},promptObj,poll,{status:'done'});return Object.assign({},promptObj,{url:_picsumUrl(promptObj.type,index),source:'picsum',status:'done'});}
+async function generateImages(analysis,onProgress){const prompts=buildPrompts(analysis);const results=new Array(4);await Promise.all(prompts.map(async(p,i)=>{try{results[i]=await _generateOne(p,i);}catch(e){console.error('[ImageService]',i,e);results[i]=Object.assign({},p,{url:_picsumUrl(p.type,i),source:'picsum',status:'done'});}if(typeof onProgress==='function')onProgress(i);}));return results;}
+
+/* Toast */
+let _tid = 0;
+function Toasts({ toasts }) {
+  return <div className="toast-wrap">{toasts.map(t=><div key={t.id} className={'toast toast-'+t.type}><span style={{flexShrink:0}}>{t.type==='success'?'✓':t.type==='error'?'✗':'ℹ'}</span>{t.msg}</div>)}</div>;
+}
+
+/* UploadBox */
+function UploadBox({ onFile, preview, analysis }) {
+  const [drag, setDrag] = useState(false);
+  const inputRef = useRef(null);
+  const handleDrop = useCallback(e=>{e.preventDefault();setDrag(false);const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))onFile(f);},[onFile]);
+  const handleChange = useCallback(e=>{const f=e.target.files[0];if(f){onFile(f);e.target.value='';}}, [onFile]);
+  return (
+    <aside className="panel">
+      <div className="panel-title">📁 Upload Product Image</div>
+      <div className={'upload-zone'+(drag?' drag':'')} onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={handleDrop} onClick={()=>inputRef.current&&inputRef.current.click()} tabIndex={0} role="button" onKeyDown={e=>e.key==='Enter'&&inputRef.current&&inputRef.current.click()} style={{outline:'none'}}>
+        <input ref={inputRef} type="file" accept="image/*" style={{display:'none'}} onChange={handleChange}/>
+        <div className="upload-icon">🖼️</div>
+        <div className="upload-title">Drop product image here</div>
+        <div className="upload-sub">PNG · JPG · WEBP — any product photo</div>
+      </div>
+      {preview && <div className="preview-wrap"><img src={preview} alt="Uploaded product"/><div className="preview-badge">✓ Image loaded</div></div>}
+      {analysis && (
+        <div className="analysis-box">
+          <div className="panel-title" style={{marginBottom:'.7rem',color:'var(--accent2)'}}>🔍 Detected Attributes</div>
+          <div className="attr-grid">
+            {[['Category',analysis.category],['Color',analysis.color],['Pattern',analysis.pattern],['Material',analysis.material]].map(([l,v])=>(
+              <div key={l} className="attr-chip"><div className="attr-label">{l}</div><div className="attr-val">{v}</div></div>
+            ))}
+          </div>
+          <div className="confidence">Detection confidence: {Math.round((analysis.confidence||0.5)*100)}%</div>
+        </div>
+      )}
+      <div className="hint"><span>💡</span><span>Name your file with keywords for best detection: <em>blue-striped-shirt.jpg</em></span></div>
+    </aside>
+  );
+}
+
+/* PromptInspector — preserved for devs */
+function PromptInspector({ analysis }) {
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState(0);
+  const prompts = buildPrompts(analysis);
+  return (
+    <div className="inspector-wrap">
+      <button className="inspector-toggle" onClick={()=>setOpen(o=>!o)}>🔍 View Generated Prompts<span style={{marginLeft:'auto',opacity:.6}}>{open?'▲':'▼'}</span></button>
+      {open && (
+        <div className="inspector-body">
+          <div className="ins-tabs">{prompts.map((p,i)=><button key={i} className={'ins-tab'+(tab===i?' active':'')} onClick={()=>setTab(i)}><span style={{width:8,height:8,borderRadius:'50%',background:p.color,display:'inline-block'}}/>{p.label}</button>)}</div>
+          <div className="prompt-text">{prompts[tab]&&prompts[tab].prompt}</div>
+          <div className="neg-text"><strong>Negative:</strong> {prompts[tab]&&prompts[tab].negative&&prompts[tab].negative.slice(0,140)}…</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* VirtualTryOnComingSoon — replaces old ComingSoonCard */
+function ComingSoonCard({ addToast }) {
+  const [showEmail, setShowEmail] = useState(false);
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleJoin = () => { if (!showEmail) setShowEmail(true); };
+  const handleSubmit = async () => {
+    if (!email || !email.includes('@')) { addToast('Please enter a valid email address', 'error'); return; }
+    setLoading(true);
+    await new Promise(r => setTimeout(r, 950));
+    setSubmitted(true);
+    setLoading(false);
+    addToast('You\'re on the list! We\'ll notify you at ' + email, 'success', 5500);
+  };
+
+  return (
+    <div className="cs-wrapper">
+      <div className="cs-card">
+        {/* Ambient background glows */}
+        <div className="cs-orbs"><div className="cs-orb1"/><div className="cs-orb2"/><div className="cs-orb3"/></div>
+
+        {/* Floating golden orb */}
+        <div className="orb-stage">
+          <div className="orb-float">
+            <div className="orb-outer">
+              <div className="orb-ring"/>
+              <div className="orb-ring2"/>
+              <div className="orb-core"/>
+            </div>
+          </div>
+        </div>
+
+        {/* Coming Soon badge */}
+        <div style={{display:'flex',justifyContent:'center'}}>
+          <div className="cs-badge"><div className="cs-badge-dot"/>Coming Soon</div>
+        </div>
+
+        <h2 className="cs-title"><span className="cs-title-grad">AI Virtual Try-On</span></h2>
+        <p className="cs-sub">Generate model shots, lifestyle visuals, and studio-quality product images using AI</p>
+
+        <div className="cs-features">
+          <div className="cs-feat"><div className="cs-feat-icon">👗</div><div className="cs-feat-name">Model Shots</div><div className="cs-feat-desc">Realistic AI model wearing your exact product</div></div>
+          <div className="cs-feat"><div className="cs-feat-icon">🎨</div><div className="cs-feat-name">Studio Quality</div><div className="cs-feat-desc">Clean catalog-ready shots, zero photographer</div></div>
+          <div className="cs-feat"><div className="cs-feat-icon">🌅</div><div className="cs-feat-name">Lifestyle Visuals</div><div className="cs-feat-desc">Aspirational real-world editorial scenes</div></div>
+        </div>
+
+        <div className="cs-message">
+          <div className="cs-msg-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            What we're building
+          </div>
+          Upload your product and let AI generate realistic model photos. This feature is currently in development and will launch soon.
+        </div>
+
+        <div className="wl-wrap">
+          {!submitted ? (
+            <>
+              <div className={'wl-email-row'+(showEmail?' show':'')}>
+                <input className="wl-inp" type="email" placeholder="your@email.com" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==='Enter'&&handleSubmit()}/>
+                <button className="wl-submit" onClick={handleSubmit}>{loading?<span className="spn"/>:'Notify Me'}</button>
+              </div>
+              <button className="wl-btn" onClick={handleJoin}>
+                {showEmail ? (
+                  <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Enter your email above</>
+                ) : (
+                  <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Get Notified</>
+                )}
+              </button>
+              <span className="wl-sub">Join <strong>2,400+</strong> sellers already on the waitlist</span>
+            </>
+          ) : (
+            <div style={{textAlign:'center',animation:'fadeIn .4s ease'}}>
+              <div style={{fontSize:'2.2rem',marginBottom:'.6rem'}}>🎉</div>
+              <div style={{fontFamily:'Syne,sans-serif',fontWeight:700,fontSize:'1.05rem',color:'#facc15',marginBottom:'.3rem'}}>You're on the list!</div>
+              <div style={{fontSize:'.82rem',color:'var(--muted)'}}>We'll email <strong style={{color:'#facc15'}}>{email}</strong> when try-on goes live.</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* DrawerUploadBox — same inner content as UploadBox, without <aside> wrapper */
+function DrawerUploadBox({ onFile, preview, analysis }) {
+  const [drag, setDrag] = useState(false);
+  const inputRef = useRef(null);
+  const handleDrop = useCallback(e=>{e.preventDefault();setDrag(false);const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))onFile(f);},[onFile]);
+  const handleChange = useCallback(e=>{const f=e.target.files[0];if(f){onFile(f);e.target.value='';}}, [onFile]);
+  return (
+    <>
+      <div className={'upload-zone'+(drag?' drag':'')} onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={handleDrop} onClick={()=>inputRef.current&&inputRef.current.click()} tabIndex={0} role="button" onKeyDown={e=>e.key==='Enter'&&inputRef.current&&inputRef.current.click()} style={{outline:'none'}}>
+        <input ref={inputRef} type="file" accept="image/*" style={{display:'none'}} onChange={handleChange}/>
+        <div className="upload-icon">🖼️</div>
+        <div className="upload-title">Drop product image here</div>
+        <div className="upload-sub">PNG · JPG · WEBP — any product photo</div>
+      </div>
+      {preview && <div className="preview-wrap"><img src={preview} alt="Uploaded product"/><div className="preview-badge">✓ Image loaded</div></div>}
+      {analysis && (
+        <div className="analysis-box">
+          <div className="panel-title" style={{marginBottom:'.7rem',color:'var(--accent2)'}}>🔍 Detected Attributes</div>
+          <div className="attr-grid">
+            {[['Category',analysis.category],['Color',analysis.color],['Pattern',analysis.pattern],['Material',analysis.material]].map(([l,v])=>(
+              <div key={l} className="attr-chip"><div className="attr-label">{l}</div><div className="attr-val">{v}</div></div>
+            ))}
+          </div>
+          <div className="confidence">Detection confidence: {Math.round((analysis.confidence||0.5)*100)}%</div>
+        </div>
+      )}
+      <div className="hint"><span>💡</span><span>Name your file with keywords for best detection: <em>blue-striped-shirt.jpg</em></span></div>
+    </>
+  );
+}
+
+/* App */
+function App() {
+  const [preview,  setPreview]  = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [toasts,   setToasts]   = useState([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const addToast = useCallback((msg, type, dur) => {
+    type=type||'info'; dur=dur||3800;
+    const id=++_tid;
+    setToasts(p=>[...p,{id,msg,type}]);
+    setTimeout(()=>setToasts(p=>p.filter(t=>t.id!==id)),dur);
+  }, []);
+
+  const handleFile = useCallback(file => {
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    const a = analyzeImage(file);
+    setAnalysis(a);
+    addToast('Detected: '+a.category+' · '+a.color+' · '+a.pattern, 'info');
+    setDrawerOpen(false); // close drawer after upload
+  }, [addToast]);
+
+  const UploadPanel = () => (
+    <UploadBox onFile={handleFile} preview={preview} analysis={analysis}/>
+  );
+
+  return (
+    <>
+      <header>
+        <div className="logo">Retlify Studio</div>
+        <div style={{display:'flex',alignItems:'center',gap:'.75rem'}}>
+          <div className="header-badge">AI Product Photography</div>
+          {/* Three-dot menu button — mobile only */}
+          <button className="mob-menu-btn" onClick={()=>setDrawerOpen(true)} title="Open upload panel" aria-label="Open sidebar">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Drawer Overlay */}
+      <div className={'drawer-overlay'+(drawerOpen?' open':'')} onClick={()=>setDrawerOpen(false)}/>
+      <div className={'drawer'+(drawerOpen?' open':'')} role="dialog" aria-modal="true" aria-label="Upload panel">
+        <div className="drawer-header">
+          <div className="drawer-title">Retlify Studio</div>
+          <button className="drawer-close" onClick={()=>setDrawerOpen(false)} aria-label="Close sidebar">✕</button>
+        </div>
+        {/* Render upload panel content inside drawer (without the outer <aside> wrapper) */}
+        <div className="panel-title">📁 Upload Product Image</div>
+        <DrawerUploadBox onFile={handleFile} preview={preview} analysis={analysis}/>
+      </div>
+
+      <div className="layout">
+        {/* Desktop sidebar — hidden on mobile via CSS */}
+        <UploadPanel/>
+        <div className="right-col">
+          <section className="hero">
+            <div className="hero-label">✦ AI-Powered Product Visuals</div>
+            <h1 className="hero-title">Turn any product into<br/><span>stunning professional photos</span></h1>
+            <p className="hero-sub">Upload a product image and AI detects its attributes, builds targeted prompts, and generates Studio, Model, Lifestyle &amp; Editorial shots. No photographer needed.</p>
+            <div className="pills">
+              <span className="pill pill-p">⚡ Smart Detection</span>
+              <span className="pill pill-g">🌸 4 Shot Types</span>
+              <span className="pill pill-s">✓ No API Key</span>
+              <span className="pill pill-b">🚀 Launching Soon</span>
+            </div>
+          </section>
+
+          {/* VirtualTryOn Coming Soon — replaces ImageGrid */}
+          <ComingSoonCard addToast={addToast}/>
+
+          {analysis && <PromptInspector analysis={analysis}/>}
+        </div>
+      </div>
+      <Toasts toasts={toasts}/>
+
+      {/* Yellow AI Floating Button */}
+      <button className="ai-fab" title="AI Studio" onClick={()=>addToast('AI Virtual Try-On launching soon!','info')}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5Z"/>
+          <path d="M5 5L6.5 6.5" strokeWidth="1.5" opacity=".6"/>
+          <path d="M19 5L17.5 6.5" strokeWidth="1.5" opacity=".6"/>
+          <path d="M5 19L6.5 17.5" strokeWidth="1.5" opacity=".6"/>
+          <path d="M19 19L17.5 17.5" strokeWidth="1.5" opacity=".6"/>
+        </svg>
+      </button>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

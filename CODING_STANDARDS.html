@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Retlify — Coding Standards v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C0C10;
+  --surface:#13131A;
+  --panel:#1A1A24;
+  --border:#2A2A38;
+  --accent:#FFD23F;
+  --accent2:#FF6B35;
+  --green:#22C55E;
+  --red:#EF4444;
+  --blue:#60A5FA;
+  --purple:#A78BFA;
+  --text:#E8E8F0;
+  --muted:#6B6B80;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Syne',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── Noise overlay ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.4;
+}
+
+/* ── Header ── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(12,12,16,.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo-mark{
+  width:28px;height:28px;background:var(--accent);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:11px;color:#0C0C10;letter-spacing:-1px;
+}
+.brand-text{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.header-right{display:flex;align-items:center;gap:12px}
+.tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px}
+.tag-v{background:rgba(255,210,63,.12);color:var(--accent)}
+.tag-stack{background:rgba(96,165,250,.12);color:var(--blue)}
+.progress-wrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+#progress-text{color:var(--green);font-weight:700}
+
+/* ── Layout ── */
+.layout{
+  max-width:1100px;margin:0 auto;
+  padding:60px 40px 100px;
+  position:relative;z-index:1;
+}
+
+/* ── Hero ── */
+.hero{margin-bottom:64px}
+.eyebrow{
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:2px;color:var(--muted);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:'';width:20px;height:1px;background:var(--muted)}
+.hero h1{
+  font-family:'Lora',serif;
+  font-size:clamp(36px,5vw,60px);
+  font-weight:400;line-height:1.1;
+  letter-spacing:-1px;margin-bottom:20px;
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:580px}
+.hero-meta{
+  margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;
+}
+.meta-chip{
+  padding:6px 14px;border:1px solid var(--border);border-radius:8px;
+  font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;
+}
+.meta-chip span{color:var(--text);font-weight:600}
+
+/* ── Table of Contents ── */
+.toc{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:28px 32px;margin-bottom:56px;
+}
+.toc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:16px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.toc-item{
+  display:flex;align-items:center;gap:10px;padding:8px 12px;
+  border-radius:8px;cursor:pointer;text-decoration:none;
+  color:var(--text);font-size:13px;font-weight:600;
+  transition:background .15s;
+}
+.toc-item:hover{background:var(--panel)}
+.toc-num{
+  width:22px;height:22px;border-radius:6px;background:var(--panel);
+  font-size:10px;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+
+/* ── Section ── */
+.section{margin-bottom:64px}
+.section-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:28px;
+  padding-bottom:16px;border-bottom:1px solid var(--border);
+}
+.section-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.section-title{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.section-subtitle{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* ── Checklist items ── */
+.checklist{display:flex;flex-direction:column;gap:8px}
+.check-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:14px 18px;display:flex;align-items:flex-start;gap:14px;
+  cursor:pointer;transition:border-color .2s,background .2s;
+  user-select:none;
+}
+.check-item:hover{border-color:var(--accent);background:var(--panel)}
+.check-item.checked{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04)}
+.check-item.checked .check-box{background:var(--green);border-color:var(--green)}
+.check-item.checked .check-box::after{opacity:1}
+.check-item.checked .check-label{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(107,107,128,.4)}
+.check-box{
+  width:20px;height:20px;border-radius:6px;border:2px solid var(--border);
+  flex-shrink:0;margin-top:1px;position:relative;transition:all .15s;
+}
+.check-box::after{
+  content:'✓';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#0C0C10;opacity:0;transition:opacity .15s;
+}
+.check-content{flex:1;min-width:0}
+.check-label{font-size:14px;font-weight:600;line-height:1.4;transition:color .2s}
+.check-desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.check-tag{
+  display:inline-block;padding:2px 8px;border-radius:5px;
+  font-size:10px;font-weight:700;letter-spacing:.3px;margin-right:6px;
+  text-transform:uppercase;flex-shrink:0;align-self:flex-start;margin-top:2px;
+}
+.tag-must{background:rgba(239,68,68,.15);color:#FCA5A5}
+.tag-should{background:rgba(255,210,63,.12);color:var(--accent)}
+.tag-nice{background:rgba(167,139,250,.12);color:var(--purple)}
+
+/* ── Code blocks ── */
+.code-block{
+  background:#0A0A0F;border:1px solid var(--border);border-radius:10px;
+  padding:16px 20px;margin:12px 0;overflow-x:auto;
+  font-family:var(--mono);font-size:12px;line-height:1.7;color:#CBD5E1;
+}
+.code-block .kw{color:#A78BFA}
+.code-block .fn{color:#60A5FA}
+.code-block .str{color:#86EFAC}
+.code-block .cm{color:#475569;font-style:italic}
+.code-block .num{color:#FCA5A5}
+
+/* ── Rule cards ── */
+.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.rule-grid{grid-template-columns:1fr}}
+.rule-card{
+  border-radius:10px;padding:16px;border:1px solid;
+}
+.rule-card.do{
+  background:rgba(34,197,94,.05);border-color:rgba(34,197,94,.2);
+}
+.rule-card.dont{
+  background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2);
+}
+.rule-card-label{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:10px;display:flex;align-items:center;gap:6px;
+}
+.do .rule-card-label{color:var(--green)}
+.dont .rule-card-label{color:var(--red)}
+.rule-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.rule-list li{
+  font-size:12px;line-height:1.5;color:var(--text);
+  display:flex;align-items:flex-start;gap:8px;
+}
+.rule-list li::before{
+  font-size:10px;flex-shrink:0;margin-top:2px;font-weight:800;
+}
+.do .rule-list li::before{content:'✓';color:var(--green)}
+.dont .rule-list li::before{content:'✗';color:var(--red)}
+
+/* ── Info callout ── */
+.callout{
+  border-radius:10px;padding:16px 18px;margin:16px 0;
+  display:flex;gap:12px;align-items:flex-start;
+  border:1px solid;
+}
+.callout-warn{background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.25)}
+.callout-info{background:rgba(96,165,250,.06);border-color:rgba(96,165,250,.2)}
+.callout-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.callout-body{font-size:13px;line-height:1.6;color:var(--muted)}
+.callout-body strong{color:var(--text);display:block;margin-bottom:4px;font-size:13px}
+
+/* ── Summary bar ── */
+.summary-bar{
+  position:sticky;bottom:24px;left:0;right:0;z-index:50;
+  pointer-events:none;
+}
+.summary-inner{
+  max-width:400px;margin:0 auto;
+  background:rgba(19,19,26,.96);backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:16px;
+  padding:14px 20px;display:flex;align-items:center;gap:16px;
+  pointer-events:all;box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.sb-score{
+  font-size:28px;font-weight:800;color:var(--accent);
+  letter-spacing:-1px;line-height:1;flex-shrink:0;
+}
+.sb-label{font-size:11px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+.sb-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;flex:1}
+.sb-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.sb-status{font-size:12px;font-weight:700;color:var(--green)}
+
+/* ── Print / export ── */
+@media print{
+  header,#summary-bar{display:none}
+  body{background:#fff;color:#000}
+  .code-block{background:#f5f5f5;color:#333}
+  .check-item{border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#">
+    <div class="logo-mark">RT</div>
+    <span class="brand-text">Retlify</span>
+  </a>
+  <div class="header-right">
+    <span class="tag tag-v">v5 Standards</span>
+    <span class="tag tag-stack">Node · JS · HTML</span>
+    <div class="progress-wrap">
+      <span id="progress-text">0%</span>
+      <span style="color:var(--muted)">complete</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="eyebrow">Engineering Standards</div>
+    <h1>Code that ships<br><em>stays shipped.</em></h1>
+    <p class="hero-sub">
+      Coding standards for the Retlify AI Product Studio — a free-tier, no-API-key
+      ecommerce intelligence platform built on Node.js, vanilla JS, and OpenRouter.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-chip">Stack <span>Node.js · Express · Vanilla JS</span></div>
+      <div class="meta-chip">AI Layer <span>OpenRouter + Pollinations + Puter.js</span></div>
+      <div class="meta-chip">Image Pipeline <span>Puter → Pollinations → Picsum → SVG</span></div>
+      <div class="meta-chip">Last updated <span>March 2026</span></div>
+    </div>
+  </div>
+
+  <!-- Table of Contents -->
+  <div class="toc">
+    <div class="toc-title">Sections</div>
+    <div class="toc-grid">
+      <a class="toc-item" href="#s1"><div class="toc-num">01</div>File & Module Structure</a>
+      <a class="toc-item" href="#s2"><div class="toc-num">02</div>Naming Conventions</a>
+      <a class="toc-item" href="#s3"><div class="toc-num">03</div>Async & Error Handling</a>
+      <a class="toc-item" href="#s4"><div class="toc-num">04</div>AI & Image Pipeline</a>
+      <a class="toc-item" href="#s5"><div class="toc-num">05</div>API Design (Express)</a>
+      <a class="toc-item" href="#s6"><div class="toc-num">06</div>Frontend Standards</a>
+      <a class="toc-item" href="#s7"><div class="toc-num">07</div>Security & Safety</a>
+      <a class="toc-item" href="#s8"><div class="toc-num">08</div>Performance</a>
+      <a class="toc-item" href="#s9"><div class="toc-num">09</div>Git & Versioning</a>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: File Structure ── -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,210,63,.1)">📁</div>
+      <div>
+        <div class="section-title">File & Module Structure</div>
+        <div class="section-subtitle">Where code lives and how modules are organised</div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-body">
+        <strong>Current structure to enforce</strong>
+        backend/ai/ for all AI services · backend/routes/ for Express routes ·
+        backend/utils/ for stateless helpers · frontend/ for all client assets.
+        Never mix concerns across layers.
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">One export per service file</span>
+          </div>
+          <div class="check-desc">Each file in backend/ai/ exports exactly one primary function or class. <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">module.exports = { runProductStudio }</code> not a bag of unrelated utilities.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Keep promptBuilder pure — no I/O</span>
+          </div>
+          <div class="check-desc">ecommercePromptBuilder.js must contain only pure functions. No <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">require('fs')</code>, no network calls, no side-effects. This makes it fast and fully testable.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Separate routes from business logic</span>
+          </div>
+          <div class="check-desc">Route files in backend/routes/ are thin — they validate input, call a service, and send a response. Never write business logic inside a router. All AI logic belongs in backend/ai/.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Co-locate fallback logic with primary logic</span>
+          </div>
+          <div class="check-desc">The fallback image chain (Pollinations → Picsum → SVG) lives inside imageGenerationService.js, not scattered across files. Each service owns its own fallback.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-nice">Nice</span>
+            <span class="check-label">Add a SKILL.md or README per ai/ module</span>
+          </div>
+          <div class="check-desc">A short comment block at the top of each service file explaining: what it does, input shape, output shape, and any external dependencies. The existing file headers in this project are a good model — keep them.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: Naming ── -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(96,165,250,.1)">🏷️</div>
+      <div>
+        <div class="section-title">Naming Conventions</div>
+        <div class="section-subtitle">Files, functions, variables, and constants</div>
+      </div>
+    </div>
+
+    <div class="rule-grid">
+      <div class="rule-card do">
+        <div class="rule-card-label">✓ Do</div>
+        <ul class="rule-list">
+          <li>camelCase for functions and variables: <code style="font-family:var(--mono);font-size:11px">buildPromptSet</code>, <code style="font-family:var(--mono);font-size:11px">generateImages</code></li>
+          <li>SCREAMING_SNAKE for module-level constants: <code style="font-family:var(--mono);font-size:11px">QUALITY_SUFFIX</code>, <code style="font-family:var(--mono);font-size:11px">CACHE_TTL_MS</code></li>
+          <li>_underscorePrefix for private/internal functions: <code style="font-family:var(--mono);font-size:11px">_buildStudioPrompt</code></li>
+          <li>kebab-case for all file names: <code style="font-family:var(--mono);font-size:11px">image-generator-demo.html</code></li>
+          <li>Descriptive async function names ending in action verbs: <code style="font-family:var(--mono);font-size:11px">generateImages</code>, <code style="font-family:var(--mono);font-size:11px">runProductStudio</code></li>
+        </ul>
+      </div>
+      <div class="rule-card dont">
+        <div class="rule-card-label">✗ Don't</div>
+        <ul class="rule-list">
+          <li>Don't use single-letter names outside loop counters or math</li>
+          <li>Don't name a function after what it receives: <code style="font-family:var(--mono);font-size:11px">handleData</code> — name it after what it produces</li>
+          <li>Don't mix naming styles in the same file</li>
+          <li>Don't use abbreviated names that lose meaning: <code style="font-family:var(--mono);font-size:11px">genImg</code> → use <code style="font-family:var(--mono);font-size:11px">generateImage</code></li>
+          <li>Don't re-use the same name for different shapes in different files</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: Async & Error Handling ── -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(167,139,250,.1)">⚡</div>
+      <div>
+        <div class="section-title">Async & Error Handling</div>
+        <div class="section-subtitle">How we handle async operations and failures gracefully</div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Golden rule: the UI must never break.</strong>
+        Every async call that touches an external service (OpenRouter, Pollinations, Puter, Picsum)
+        must have a .catch() handler that returns a valid fallback value — never null or undefined.
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">All external calls wrapped in try/catch</span>
+          </div>
+          <div class="check-desc">Every call to OpenRouter, Pollinations, Puter, Picsum must be wrapped. The catch block must log the error and return a graceful fallback — never rethrow to crash the pipeline.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Use Promise.all for parallel image generation</span>
+          </div>
+          <div class="check-desc">All 4 image generation calls run in parallel via <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">Promise.all(tasks)</code>. Never await them sequentially — it would 4× the wait time for the user.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+<span class="cm">// ✓ Correct pattern — parallel with individual fallback</span>
+<span class="kw">const</span> tasks = variations.<span class="fn">map</span>(v =&gt; {
+  <span class="kw">const</span> info = promptSet[v];
+  <span class="kw">return</span> <span class="fn">_generateOne</span>(info.prompt, info.seeds[<span class="num">0</span>], v)
+    .<span class="fn">catch</span>(err =&gt; {
+      console.<span class="fn">warn</span>(<span class="str">`[ImageGen] fallback for ${v}:`</span>, err.message);
+      <span class="kw">return</span> { url: <span class="fn">_picsumUrl</span>(v), source: <span class="str">'picsum'</span>, type: v };
+    });
+});
+<span class="kw">const</span> images = <span class="kw">await</span> Promise.<span class="fn">all</span>(tasks);
+      </div>
+
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Log errors with service prefix tags</span>
+          </div>
+          <div class="check-desc">All console.error / console.warn calls must include a bracketed service prefix: <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">[ProductStudio]</code>, <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">[ImageGen]</code>, <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">[AI Search]</code>. Makes debugging fast.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Add timeout to external HTTP calls</span>
+          </div>
+          <div class="check-desc">Pollinations calls should have an explicit AbortController timeout (e.g. 15 seconds) so a stalled upstream doesn't hang the pipeline. Fall to next provider on timeout.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Return consistent result shapes</span>
+          </div>
+          <div class="check-desc">Every service returns the same object shape whether it succeeded or failed (with a <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">success: boolean</code> flag). The caller should never have to guess the shape based on whether an error occurred.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: AI & Image Pipeline ── -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,107,53,.1)">🧠</div>
+      <div>
+        <div class="section-title">AI & Image Pipeline</div>
+        <div class="section-subtitle">Rules for prompts, providers, and the fallback chain</div>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Always run the full 4-provider fallback chain</span>
+          </div>
+          <div class="check-desc">Order: Puter.js (primary) → Pollinations (secondary) → Picsum (tertiary) → inline SVG (static final). Never skip a level. Each level is tried only if the previous fails.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Build prompts from productName + category, never raw user text</span>
+          </div>
+          <div class="check-desc">Raw user input ("shirt") is enriched by the prompt builder before it hits any image API. The builder adds material, lighting, setting, and quality suffixes from CATEGORY_CONTEXT. Direct string concatenation to the image API is forbidden.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Each image variation gets a distinct prompt</span>
+          </div>
+          <div class="check-desc">Studio, Lifestyle, Model, and Editorial shots must have meaningfully different prompts — not just the same prompt with minor changes. Refer to the 4 _build*Prompt functions as the canonical templates.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+<span class="cm">// ✓ Correct — category-aware studio prompt</span>
+<span class="kw">function</span> <span class="fn">_buildStudioPrompt</span>(productName, category, style) {
+  <span class="kw">const</span> { ctx } = <span class="fn">_buildBase</span>(productName, category);
+  <span class="kw">return</span> [
+    <span class="str">`${productName}, ${ctx.material}`</span>,
+    <span class="str">`ecommerce product photography, pure white background, studio lighting`</span>,
+    <span class="str">`centered composition, front view, clean edges`</span>,
+    QUALITY_SUFFIX,
+  ].<span class="fn">join</span>(<span class="str">', '</span>);
+}
+
+<span class="cm">// ✗ Wrong — raw user input sent directly</span>
+<span class="kw">const</span> url = <span class="str">`https://image.pollinations.ai/prompt/${userInput}`</span>; <span class="cm">// NEVER</span>
+      </div>
+
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Add onError fallback on every &lt;img&gt; tag</span>
+          </div>
+          <div class="check-desc">Every image tag in frontend HTML must include <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">onerror="this.src='https://picsum.photos/512?random='+index"</code>. This is the last line of defence — a broken image icon must never reach the user.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Cache generated images per (productName, category, variationType)</span>
+          </div>
+          <div class="check-desc">The in-memory cache key is <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">productName|category|variationType</code>. TTL is 30 minutes. Check the cache before calling any image provider. Cap the cache at 500 entries.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Never use HuggingFace or Replicate</span>
+          </div>
+          <div class="check-desc">These were removed in v3 and must not be re-introduced. They require API keys and have rate limits. Only Puter.js, Pollinations, and Picsum are approved image providers.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: API Design ── -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(34,197,94,.1)">🔌</div>
+      <div>
+        <div class="section-title">API Design (Express)</div>
+        <div class="section-subtitle">Route contracts, rate limiting, and response shapes</div>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Every route has a rate limiter</span>
+          </div>
+          <div class="check-desc">Use express-rate-limit on every POST endpoint. The product-studio endpoint uses studioLimit (5 req/min). Text generation uses genLimit (10 req/min). Never expose an endpoint without a rate limit — this is a free-tier system.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Return consistent JSON shapes on success and error</span>
+          </div>
+          <div class="check-desc">Success: <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">{success: true, ...data}</code>. Error: <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">{success: false, error: string, details?: string}</code>. Never return different top-level shapes — the frontend shouldn't need to check shape before reading data.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Validate all required inputs before calling services</span>
+          </div>
+          <div class="check-desc">Check <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">productName</code> is a non-empty string before calling productStudioService. Return 400 with a clear error message. Never pass raw req.body to a service without validation.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Use the /health endpoint as your integration test</span>
+          </div>
+          <div class="check-desc">Keep the GET /api/ai/health endpoint up-to-date. It must accurately report AI enabled status, image provider, and feature list. Run it first when debugging a broken environment.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: Frontend ── -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,210,63,.1)">🖥️</div>
+      <div>
+        <div class="section-title">Frontend Standards</div>
+        <div class="section-subtitle">HTML, vanilla JS, and the image generation UI</div>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Always show a loading state during generation</span>
+          </div>
+          <div class="check-desc">Show skeleton loaders for all 4 image slots immediately when generation starts. Never leave the user staring at a blank grid. Disable the generate button during loading to prevent duplicate requests.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Use CSS variables for all theme values</span>
+          </div>
+          <div class="check-desc">Colors, spacing, radii, shadows — all go into <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">:root{}</code> CSS variables. Never hardcode <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">#FFD23F</code> directly in a style property. This enables dark/light mode toggling without a rewrite.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Validate productName client-side before any API call</span>
+          </div>
+          <div class="check-desc">If productName is empty or whitespace, show an inline validation message and block the request. Don't waste a rate-limited API call on an empty input. Show feedback within 200ms of submit.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Label each image with its variation type</span>
+          </div>
+          <div class="check-desc">Every image in the 4-image grid must display a visible label: Studio · Model · Lifestyle · Editorial. These labels help users understand what they're seeing and improve perceived quality.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Add hover zoom on product images</span>
+          </div>
+          <div class="check-desc"><code style="font-family:var(--mono);font-size:11px;color:var(--accent)">transform: scale(1.04)</code> on <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">:hover</code> with a 0.3s ease transition gives a premium feel. overflow:hidden on the card container keeps it clean.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-nice">Nice</span>
+            <span class="check-label">Indicate which provider served each image</span>
+          </div>
+          <div class="check-desc">Show a small badge (Puter / Pollinations / Picsum) on each image to communicate system status and help debug provider failures in production.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 7: Security ── -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(239,68,68,.1)">🔒</div>
+      <div>
+        <div class="section-title">Security & Safety</div>
+        <div class="section-subtitle">Content filtering, secrets management, and input sanitisation</div>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">All secrets in .env — never in source code</span>
+          </div>
+          <div class="check-desc">OPENROUTER_API_KEY and any other credentials must be in .env (in .gitignore). The .env.example file stays committed. Running <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">git grep -r "sk-or-v1"</code> should return nothing.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Run all productName inputs through isSafe() before generation</span>
+          </div>
+          <div class="check-desc">The BLOCKED_TERMS set in productStudioService.js must be checked before any AI call. Do not add loopholes. If a term is borderline, add it to the set — it is better to block and explain than to generate problematic content.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Sanitise prompt strings before URL-encoding</span>
+          </div>
+          <div class="check-desc">Strip HTML tags and control characters from prompts before they become URL parameters to Pollinations. Use <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">encodeURIComponent()</code> — never raw string concatenation into a URL.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Cap prompt length at 500 characters</span>
+          </div>
+          <div class="check-desc">Built prompts should be truncated at 500 chars before being sent to any image provider. Long prompts degrade result quality and can cause URL length errors. The quality suffix is the last thing added, so truncate the middle if needed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 8: Performance ── -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(96,165,250,.1)">🚀</div>
+      <div>
+        <div class="section-title">Performance</div>
+        <div class="section-subtitle">Caching, parallelism, and avoiding waste</div>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Never make duplicate API calls for the same product+variant</span>
+          </div>
+          <div class="check-desc">The _cache Map in imageGenerationService.js prevents this. Always check the cache before firing a generation request. If cache is hit, return fromCache:true in the response.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Keep the in-memory cache under 500 entries</span>
+          </div>
+          <div class="check-desc">The eviction logic deletes the oldest entry when the cache size exceeds 500. Never remove this guard — on a shared server, unbounded growth causes OOM crashes.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Run description and image generation in parallel</span>
+          </div>
+          <div class="check-desc"><code style="font-family:var(--mono);font-size:11px;color:var(--accent)">Promise.all([generateProductDescription(...), generateImages(...)])</code> is the correct pattern. The text and images are independent — there is no reason to wait for text before starting image generation.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-nice">Nice</span>
+            <span class="check-label">Stream text response to frontend when possible</span>
+          </div>
+          <div class="check-desc">OpenRouter supports streaming. For long descriptions, stream the text to the frontend so users see content appearing in real time instead of waiting for the full response.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 9: Git ── -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(34,197,94,.1)">🌿</div>
+      <div>
+        <div class="section-title">Git & Versioning</div>
+        <div class="section-subtitle">Commit messages, branching, and release labelling</div>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Use conventional commit prefixes</span>
+          </div>
+          <div class="check-desc"><code style="font-family:var(--mono);font-size:11px;color:var(--accent)">feat:</code> new feature · <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">fix:</code> bug fix · <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">refactor:</code> code change, no behaviour change · <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">chore:</code> tooling/config · <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">docs:</code> documentation. Example: <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">feat(image-gen): add Puter.js as primary image provider</code></div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-must">Must</span>
+            <span class="check-label">Never commit .env or node_modules</span>
+          </div>
+          <div class="check-desc">.gitignore must include .env, node_modules/, *.log, dist/, .DS_Store. Run <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">git status</code> before every commit — if you see any of these, stop and fix your .gitignore.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-should">Should</span>
+            <span class="check-label">Tag releases with semantic versions</span>
+          </div>
+          <div class="check-desc">This project is currently at v5. Use <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">git tag v5.1.0</code> for minor updates (new features), <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">v5.0.1</code> for patch fixes. Breaking changes bump to v6.</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="check-tag tag-nice">Nice</span>
+            <span class="check-label">Keep a CHANGELOG.md at project root</span>
+          </div>
+          <div class="check-desc">One entry per release with: what changed, what was removed, what was fixed. The existing AI_UPGRADE_v2.md is a good model — centralise these into a single CHANGELOG.md going forward.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<!-- ── Sticky summary bar ── -->
+<div class="summary-bar" id="summary-bar">
+  <div class="summary-inner">
+    <div class="sb-score" id="sb-score">0</div>
+    <div style="flex:1;min-width:0">
+      <div class="sb-label">Standards checked off</div>
+      <div class="sb-bar"><div class="sb-fill" id="sb-fill" style="width:0%"></div></div>
+    </div>
+    <div class="sb-status" id="sb-status">Get started ↑</div>
+  </div>
+</div>
+
+<script>
+const TOTAL = document.querySelectorAll('.check-item').length;
+let checked = 0;
+
+function toggle(el) {
+  el.classList.toggle('checked');
+  checked = document.querySelectorAll('.check-item.checked').length;
+  const pct = Math.round(checked / TOTAL * 100);
+  document.getElementById('sb-score').textContent = checked + '/' + TOTAL;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = pct + '%';
+  const s = document.getElementById('sb-status');
+  if (pct === 100) s.textContent = '🎉 All done!';
+  else if (pct >= 75) s.textContent = 'Almost there!';
+  else if (pct >= 40) s.textContent = 'Good progress';
+  else s.textContent = 'Get started ↑';
+}
+
+// Smooth scroll for TOC links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>

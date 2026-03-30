@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Retlify Image Generator v5 — Smart Prompt Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0D0D0F;
+    --ink-60: #5C5C6E;
+    --surface: #F7F7F5;
+    --panel: #FFFFFF;
+    --border: #E8E8EF;
+    --accent: #FFD23F;
+    --accent-dark: #111827;
+    --green: #16A34A;
+    --radius: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,.1);
+  }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Top Bar ──────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(247,247,245,.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 58px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .logo {
+    width: 30px; height: 30px; background: var(--ink); color: var(--accent);
+    border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 12px; letter-spacing: -1px;
+  }
+  .brand-name { font-weight: 700; font-size: 15px; }
+  .version-badge {
+    padding: 3px 10px; background: #DCFCE7; color: #166534;
+    border-radius: 20px; font-size: 11px; font-weight: 700;
+    letter-spacing: .3px;
+  }
+  .free-badge {
+    padding: 3px 10px; background: #EFF6FF; color: #1D4ED8;
+    border-radius: 20px; font-size: 11px; font-weight: 700;
+  }
+
+  /* ── Page Layout ─────────────────────────── */
+  .page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .hero {
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--ink-60); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 400; line-height: 1.15;
+    letter-spacing: -.5px; margin-bottom: 14px;
+  }
+  .hero h1 em { font-style: italic; color: #E85520; }
+  .hero p { font-size: 16px; color: var(--ink-60); line-height: 1.6; max-width: 600px; }
+
+  .fixes-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-top: 24px;
+  }
+  .fix-card {
+    background: var(--panel); border-radius: 12px; padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .fix-icon { font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+  .fix-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .fix-desc  { font-size: 12px; color: var(--ink-60); }
+
+  /* ── Main Card ───────────────────────────── */
+  .card {
+    background: var(--panel);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .card-header-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, #111827, #374151);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .card-header-text h2 { font-size: 17px; font-weight: 700; }
+  .card-header-text p  { font-size: 13px; color: var(--ink-60); margin-top: 2px; }
+  .card-body { padding: 28px; }
+
+  /* ── Prompt Preview ──────────────────────── */
+  .prompt-preview {
+    margin-top: 20px;
+    padding: 16px;
+    background: #F9FAFB;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+  }
+  .prompt-preview-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .6px; color: var(--ink-60); margin-bottom: 10px;
+  }
+  .prompt-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .prompt-tab {
+    padding: 4px 10px; background: #F3F4F6; border: 1.5px solid #E5E7EB;
+    border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer;
+    transition: all .15s; color: #374151;
+  }
+  .prompt-tab.active { background: #111827; color: #FFD23F; border-color: #111827; }
+  .prompt-text {
+    font-size: 12px; color: #374151; line-height: 1.6;
+    font-family: 'Courier New', monospace;
+    background: #fff; padding: 12px; border-radius: 8px;
+    border: 1px solid var(--border); word-break: break-word;
+    min-height: 60px;
+  }
+  .prompt-text em { color: #2563EB; font-style: normal; font-weight: 600; }
+
+  /* ── Generator Container ─────────────────── */
+  #image-generator { margin-top: 0; }
+
+  /* ── API Reference Card ─────────────────── */
+  .api-card {
+    margin-top: 32px;
+    background: var(--panel);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .api-card-header {
+    padding: 18px 24px;
+    background: #111827; color: #FFD23F;
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .api-card-body { padding: 24px; }
+  .api-section { margin-bottom: 20px; }
+  .api-section:last-child { margin-bottom: 0; }
+  .api-section h3 { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  pre {
+    background: #F9FAFB; border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 16px;
+    font-size: 12px; line-height: 1.7;
+    overflow-x: auto; color: #1e293b;
+  }
+  .kw  { color: #9333ea; }
+  .fn  { color: #1D4ED8; }
+  .str { color: #16a34a; }
+  .cm  { color: #6B7280; font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a class="brand" href="#">
+    <div class="logo">Rt</div>
+    <span class="brand-name">Retlify</span>
+  </a>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span class="version-badge">v5 Fixed</span>
+    <span class="free-badge">100% Free</span>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span>🔧</span> Image Generation System — Fixed
+    </div>
+    <h1>Accurate Product Images,<br><em>Not Random Buildings</em></h1>
+    <p>Powered by Puter.js · Category-aware prompt engine · 4 shot types · No API keys · 100% browser-side</p>
+
+    <div class="fixes-grid">
+      <div class="fix-card">
+        <span class="fix-icon">🎯</span>
+        <div>
+          <div class="fix-label">Category-Aware Prompts</div>
+          <div class="fix-desc">Shirt → clothing terms. Saree → ethnic terms. Phone → device terms.</div>
+        </div>
+      </div>
+      <div class="fix-card">
+        <span class="fix-icon">✨</span>
+        <div>
+          <div class="fix-label">Features Integration</div>
+          <div class="fix-desc">Cotton, slim fit, navy blue — all woven into the AI prompt.</div>
+        </div>
+      </div>
+      <div class="fix-card">
+        <span class="fix-icon">🚫</span>
+        <div>
+          <div class="fix-label">No HuggingFace / Replicate</div>
+          <div class="fix-desc">Pure Puter.js. Free forever. No signup. No API key.</div>
+        </div>
+      </div>
+      <div class="fix-card">
+        <span class="fix-icon">📦</span>
+        <div>
+          <div class="fix-label">4 Shot Types</div>
+          <div class="fix-desc">Studio, Model, Lifestyle, Premium Brand — for any product.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATOR CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🖼️</div>
+      <div class="card-header-text">
+        <h2>AI Product Image Generator</h2>
+        <p>Enter your product details — the smarter prompt engine handles the rest</p>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Prompt Preview (live) -->
+      <div class="prompt-preview" id="prompt-preview" style="display:none">
+        <div class="prompt-preview-label">🧠 Live Prompt Preview — what gets sent to the AI</div>
+        <div class="prompt-tabs" id="prompt-tabs"></div>
+        <div class="prompt-text" id="prompt-text">Prompt will appear here…</div>
+      </div>
+
+      <div style="height:20px"></div>
+
+      <!-- The generator widget loads here -->
+      <div id="image-generator"></div>
+
+    </div>
+  </div>
+
+  <!-- API REFERENCE -->
+  <div class="api-card">
+    <div class="api-card-header">📋 API Reference — How to Integrate</div>
+    <div class="api-card-body">
+
+      <div class="api-section">
+        <h3>🆕 Primary API (v5) — use in ai-product-studio.js</h3>
+        <pre><span class="cm">// generateImages(productData) — the correct way in v5</span>
+<span class="kw">const</span> shots = <span class="kw">await</span> <span class="fn">generateImages</span>({
+  productName: <span class="str">'Yellow Checkered Cotton Shirt'</span>,
+  category:    <span class="str">'Clothing &amp; Apparel'</span>,
+  features:    <span class="str">'Slim fit, full sleeves, breathable cotton'</span>
+});
+
+<span class="cm">// shots = [
+//   { url: '...', label: 'Studio Shot',        type: 'studio',    emoji: '📦', error: false },
+//   { url: '...', label: 'Model Shot',          type: 'model',     emoji: '👗', error: false },
+//   { url: '...', label: 'Lifestyle Shot',      type: 'lifestyle', emoji: '🌿', error: false },
+//   { url: '...', label: 'Premium Brand Shot',  type: 'premium',   emoji: '✨', error: false },
+// ]</span></pre>
+      </div>
+
+      <div class="api-section">
+        <h3>🔄 Integration in ai-product-studio.js (replace old call)</h3>
+        <pre><span class="cm">// ── OLD (broken — only product name, no category/features) ──</span>
+<span class="kw">const</span> imagePromise = <span class="fn">window.generateProductImages</span>(_state.productName.trim());
+
+<span class="cm">// ── NEW (fixed — pass full product data object) ──</span>
+<span class="kw">const</span> imagePromise = <span class="fn">window.generateImages</span>({
+  productName: _state.productName.trim(),
+  category:    _state.category,     <span class="cm">// from ps-cat select</span>
+  features:    _state.features,     <span class="cm">// from ps-feats input</span>
+});</pre>
+      </div>
+
+      <div class="api-section">
+        <h3>📄 Script tag — drop into any HTML page</h3>
+        <pre><span class="cm">&lt;!-- 1. Load Puter.js (optional — image-generator.js loads it automatically) --&gt;</span>
+&lt;<span class="kw">script</span> src=<span class="str">"https://js.puter.com/v2/"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+
+<span class="cm">&lt;!-- 2. Load the fixed image generator --&gt;</span>
+&lt;<span class="kw">script</span> src=<span class="str">"image-generator.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+
+<span class="cm">&lt;!-- 3. Call it --&gt;</span>
+&lt;<span class="kw">script</span>&gt;
+  <span class="kw">const</span> shots = <span class="kw">await</span> <span class="fn">generateImages</span>({
+    productName: <span class="str">'Silk Banarasi Saree'</span>,
+    category:    <span class="str">'Saree'</span>,
+    features:    <span class="str">'Zari border, red and gold, wedding wear'</span>,
+  });
+  shots.<span class="fn">forEach</span>(s =&gt; console.<span class="fn">log</span>(s.label, s.url));
+&lt;/<span class="kw">script</span>&gt;</pre>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- Load the fixed image generator -->
+<script src="image-generator.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  // Boot the ImageGenerator widget
+  const gen = new ImageGenerator('#image-generator', { columns: 2 });
+
+  // ── Live prompt preview ──────────────────────────────────────────────────
+  const preview    = document.getElementById('prompt-preview');
+  const tabsEl     = document.getElementById('prompt-tabs');
+  const promptText = document.getElementById('prompt-text');
+
+  let currentShotIdx = 0;
+  let lastProductName = '';
+  let lastCategory    = '';
+  let lastFeatures    = '';
+
+  function updatePromptPreview() {
+    const nameEl  = document.getElementById('ig-name-input');
+    const catEl   = document.getElementById('ig-cat-select');
+    const featsEl = document.getElementById('ig-feats-input');
+
+    const name  = nameEl  ? nameEl.value.trim()  : '';
+    const cat   = catEl   ? catEl.value.trim()   : '';
+    const feats = featsEl ? featsEl.value.trim() : '';
+
+    lastProductName = name;
+    lastCategory    = cat;
+    lastFeatures    = feats;
+
+    if (!name) { preview.style.display = 'none'; return; }
+
+    preview.style.display = 'block';
+
+    // Render tabs
+    tabsEl.innerHTML = window.SHOT_TYPES.map((s, i) =>
+      `<button class="prompt-tab${i === currentShotIdx ? ' active' : ''}" data-idx="${i}">${s.emoji} ${s.label}</button>`
+    ).join('');
+
+    // Render prompt
+    const shot   = window.SHOT_TYPES[currentShotIdx];
+    const prompt = window.buildPrompt(name, cat, feats, shot);
+
+    // Highlight the product name in the prompt
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const highlighted = prompt.replace(
+      new RegExp(escaped, 'gi'),
+      m => `<em>${m}</em>`
+    );
+    promptText.innerHTML = highlighted;
+
+    // Re-attach tab events
+    tabsEl.querySelectorAll('.prompt-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentShotIdx = parseInt(btn.dataset.idx, 10);
+        updatePromptPreview();
+      });
+    });
+  }
+
+  // Poll for input changes (after generator renders)
+  let pollCount = 0;
+  const pollInterval = setInterval(() => {
+    const nameEl = document.getElementById('ig-name-input');
+    if (nameEl) {
+      nameEl.addEventListener('input',  updatePromptPreview);
+      document.getElementById('ig-cat-select')?.addEventListener('change', updatePromptPreview);
+      document.getElementById('ig-feats-input')?.addEventListener('input', updatePromptPreview);
+      clearInterval(pollInterval);
+    }
+    if (++pollCount > 100) clearInterval(pollInterval);
+  }, 100);
+
+  // Also re-poll after any render (the generator re-renders on state change)
+  const origRender = gen._render.bind(gen);
+  gen._render = function () {
+    origRender();
+    setTimeout(() => {
+      const nameEl = document.getElementById('ig-name-input');
+      if (nameEl) {
+        nameEl.addEventListener('input',  updatePromptPreview);
+        document.getElementById('ig-cat-select')?.addEventListener('change', updatePromptPreview);
+        document.getElementById('ig-feats-input')?.addEventListener('input', updatePromptPreview);
+        // Restore last values
+        if (lastProductName) nameEl.value = lastProductName;
+        const catEl = document.getElementById('ig-cat-select');
+        if (catEl && lastCategory) catEl.value = lastCategory;
+        const featsEl = document.getElementById('ig-feats-input');
+        if (featsEl && lastFeatures) featsEl.value = lastFeatures;
+      }
+    }, 50);
+  };
+
+})();
+</script>
+</body>
+</html>
