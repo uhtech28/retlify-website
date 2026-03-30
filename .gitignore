@@ -29,7 +29,6 @@ tmp/
 temp/
  
 # ── Media / Large Assets ──────────────────────────────────
-*.mp4
 *.mov
 *.avi
 *.mkv
