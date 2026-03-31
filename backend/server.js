@@ -20,7 +20,10 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: '*', methods: ['GET','POST','PUT','DELETE'], allowedHeaders: ['Content-Type','Authorization'] }));
 app.use(express.json({ limit: '10mb' })); // larger limit for base64 photos
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static('public'));
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(__dirname + '/public/sitemap.xml');
+});
 // ── Rate limiting ─────────────────────────────────────────
 const authLimiter = rateLimit({ windowMs: 15*60*1000, max: 30, message: { message: 'Too many requests. Try again later.' } });
 
