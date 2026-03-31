@@ -43,18 +43,8 @@ app.post('/api/generate-images', (req, res, next) => {
 app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'Retlify API', time: new Date() }));
 
 // ── POST /api/contact ─────────────────────────────────────
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const contactLimiter = rateLimit({ windowMs: 15*60*1000, max: 10, message: { message: 'Too many requests.' } });
-
-const getMailer = () => nodemailer.createTransport({
-  host:   'smtp.gmail.com',
-  port:   465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER || 'retlifyy@gmail.com',
-    pass: process.env.SMTP_PASS || ''
-  }
-});
 app.post('/api/contact', contactLimiter, async (req, res) => {
   try {
     const { name, email, message, timestamp } = req.body;
@@ -66,15 +56,17 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     const safe = s => String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;').trim();
     const safeTime = timestamp ? new Date(timestamp).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) : new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
 
-    await getMailer().sendMail({
-      from:    `"Retlify Contact" <${process.env.SMTP_USER || 'retlifyy@gmail.com'}>`,
-      to:      process.env.TO_EMAIL || 'retlifyy@gmail.com',
-      replyTo: safe(email),
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    await resend.emails.send({
+      from:    'Retlify <onboarding@resend.dev>',
+      to:      process.env.TO_EMAIL || 'utkarshverma8670@gmail.com',
+      replyTo: email,
       subject: 'New Contact Form Submission - Retlify',
-      text:    `Name: ${safe(name)}\nEmail: ${safe(email)}\nMessage:\n${safe(message)}\nSubmitted At: ${safeTime} (IST)`,
-      html:    `<div style="font-family:sans-serif;max-width:540px;margin:auto"><div style="background:#111827;border-radius:12px 12px 0 0;padding:24px;display:flex;align-items:center;gap:10px"><span style="background:#FFD23F;border-radius:8px;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#111827">R</span><span style="color:#fff;font-weight:800;font-size:16px">Retlify</span></div><div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:none"><h2 style="font-size:20px;margin:0 0 18px">New Contact Form Submission</h2><div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:16px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9CA3AF;letter-spacing:.6px;margin-bottom:5px">Name</div><div style="font-size:15px;font-weight:700;color:#111827">${safe(name)}</div></div><div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:16px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9CA3AF;letter-spacing:.6px;margin-bottom:5px">Email</div><div style="font-size:15px;font-weight:700;color:#2563EB">${safe(email)}</div></div><div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:16px;margin-bottom:12px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9CA3AF;letter-spacing:.6px;margin-bottom:5px">Message</div><div style="font-size:14px;color:#374151;line-height:1.65;white-space:pre-wrap">${safe(message)}</div></div><div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:16px;margin-bottom:20px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#9CA3AF;letter-spacing:.6px;margin-bottom:5px">Submitted At</div><div style="font-size:14px;font-weight:600;color:#111827">${safeTime} (IST)</div></div><div style="text-align:center"><a href="mailto:${safe(email)}?subject=Re: Your message to Retlify" style="display:inline-block;background:#FFD23F;color:#111827;font-weight:700;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:14px">Reply to ${safe(name)}</a></div></div><div style="background:#F9FAFB;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;padding:12px 24px;font-size:11px;color:#9CA3AF;text-align:center">Sent by Retlify contact form</div></div>`
+      html:    `<h2>New message from ${safe(name)}</h2>
+                <p><strong>Email:</strong> ${safe(email)}</p>
+                <p><strong>Message:</strong><br/>${safe(message)}</p>
+                <p><strong>Time:</strong> ${safeTime} IST</p>`
     });
-
     console.log(`[Contact] Email sent from ${safe(email)} (${safe(name)})`);
     res.status(200).json({ success: true });
   } catch (err) {
