@@ -10,7 +10,12 @@ const authRoutes   = require('./routes/auth');
 const surveyRoutes = require('./routes/survey');
 const statsRoutes  = require('./routes/stats');
 const aiRoutes     = require('./routes/ai');
-
+app.use((req, res, next) => {
+  if (req.headers.host === 'www.retlify.com') {
+    return res.redirect(301, 'https://retlify.com' + req.url);
+  }
+  next();
+});
 const app  = express();
 app.set('trust proxy', 1); // ← ADD THIS LINE
 const PORT = process.env.PORT || 5000;
