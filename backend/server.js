@@ -46,13 +46,15 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'Retlify 
 const nodemailer = require('nodemailer');
 const contactLimiter = rateLimit({ windowMs: 15*60*1000, max: 10, message: { message: 'Too many requests.' } });
 
-const mailer = nodemailer.createTransport({
-  host:   process.env.SMTP_HOST || 'smtp.gmail.com',
-  port:   parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_PORT === '465',
-  auth: { user: process.env.SMTP_USER || 'retlifyy@gmail.com', pass: process.env.SMTP_PASS || '' }
+const getMailer = () => nodemailer.createTransport({
+  host:   'smtp.gmail.com',
+  port:   465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER || 'retlifyy@gmail.com',
+    pass: process.env.SMTP_PASS || ''
+  }
 });
-
 app.post('/api/contact', contactLimiter, async (req, res) => {
   try {
     const { name, email, message, timestamp } = req.body;
@@ -64,7 +66,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     const safe = s => String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;').trim();
     const safeTime = timestamp ? new Date(timestamp).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}) : new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
 
-    await mailer.sendMail({
+    await getMailer().sendMail({
       from:    `"Retlify Contact" <${process.env.SMTP_USER || 'retlifyy@gmail.com'}>`,
       to:      process.env.TO_EMAIL || 'retlifyy@gmail.com',
       replyTo: safe(email),
