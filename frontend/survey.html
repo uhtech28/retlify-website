@@ -142,7 +142,7 @@ body.rtl .divider { flex-direction: row-reverse; }
 </div>
 
 <script>
-const API = 'http://localhost:5000/api/auth';
+const API = `${window.location.origin}/api/auth`;
 const TOTAL = 6;
 let cur = 1;
 const ans = {};
