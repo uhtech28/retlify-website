@@ -1,9 +1,3 @@
-app.use((req, res, next) => {
-  if (req.headers.host === 'www.retlify.com') {
-    return res.redirect(301, 'https://retlify.com' + req.url);
-  }
-  next();
-});
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
