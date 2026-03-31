@@ -14,7 +14,19 @@ const aiRoutes     = require('./routes/ai');
 const app  = express();
 app.set('trust proxy', 1); // ← ADD THIS LINE
 const PORT = process.env.PORT || 5000;
+import express from "express";
+import path from "path";
 
+const app = express();
+
+// serve static files from frontend build + public
+app.use(express.static("frontend/dist"));
+app.use(express.static("public")); // 👈 ADD THIS
+
+// fallback (important)
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve("frontend/dist/index.html"));
+});
 // ── Security ─────────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: '*', methods: ['GET','POST','PUT','DELETE'], allowedHeaders: ['Content-Type','Authorization'] }));
