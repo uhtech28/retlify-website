@@ -22,6 +22,7 @@ app.use(express.json({ limit: '10mb' })); // larger limit for base64 photos
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.get('/sitemap.xml', (req, res) => {
+  res.header('Content-Type', 'application/xml');
   res.sendFile(__dirname + '/public/sitemap.xml');
 });
 // ── Rate limiting ─────────────────────────────────────────
