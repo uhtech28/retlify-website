@@ -26,7 +26,7 @@ const authLimiter = rateLimit({ windowMs: 15*60*1000, max: 30, message: { messag
 
 // ── Serve frontend ─────────────────────────────────────────
 app.use(express.static(path.join(__dirname, '../frontend')));
-
+app.use(express.static(path.join(__dirname, 'public')));
 // ── API Routes ────────────────────────────────────────────
 app.use('/api/auth',   authLimiter, authRoutes);
 app.use('/auth',       authRoutes);   // for Google OAuth callbacks (/auth/google, /auth/google/callback)
