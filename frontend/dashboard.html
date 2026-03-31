@@ -1089,7 +1089,7 @@ function applyLang(lang) { I18n.setLanguage(lang); }
 // ── REAL STATS (live from backend) ──────────────────────────
 async function loadStats() {
   try {
-    const r = await fetch('http://localhost:5000/api/stats', {headers:{Authorization:'Bearer '+token}});
+   const r = await fetch(window.location.origin+'/api/stats',
     if(!r.ok) return;
     const d = await r.json();
     if(d.products  !== undefined) document.getElementById('st-products').textContent = d.products;
