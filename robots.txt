@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block auth and private routes from indexing
+Disallow: /frontend/forgot-password.html
+Disallow: /frontend/reset-password.html
+Disallow: /backend/
+
+# Sitemap location
+Sitemap: https://retlify.com/sitemap.xml
