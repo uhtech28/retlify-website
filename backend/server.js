@@ -44,7 +44,7 @@ app.use('/auth',       authRoutes);
 app.use('/api/survey', surveyRoutes);
 app.use('/api/stats',  statsRoutes);
 app.use('/api/ai',     aiRoutes);
-
+app.use(express.static('public'));
 // Convenience alias: /api/generate-images → /api/ai/generate-images
 app.post('/api/generate-images', (req, res, next) => {
   req.url = '/generate-images';
