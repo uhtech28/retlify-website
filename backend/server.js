@@ -27,12 +27,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ── SEO Files ─────────────────────────────────────────────
 app.get('/sitemap.xml', (req, res) => {
-  res.setHeader('Content-Type', 'application/xml');
-  res.sendFile(path.join(__dirname, '../sitemap.xml'));
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.sendFile(path.join(__dirname, '../sitemap.xml'), err => {
+    if (err) { console.error('[sitemap] Error:', err.message); res.status(404).end(); }
+  });
 });
 app.get('/robots.txt', (req, res) => {
-  res.setHeader('Content-Type', 'text/plain');
-  res.sendFile(path.join(__dirname, '../robots.txt'));
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.sendFile(path.join(__dirname, '../robots.txt'), err => {
+    if (err) { console.error('[robots] Error:', err.message); res.status(404).end(); }
+  });
 });
 
 // ── Rate limiting ─────────────────────────────────────────
