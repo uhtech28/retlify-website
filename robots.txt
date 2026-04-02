@@ -2,9 +2,14 @@ User-agent: *
 Allow: /
 
 # Block auth and private routes from indexing
-Disallow: /frontend/forgot-password.html
-Disallow: /frontend/reset-password.html
+Disallow: /login
+Disallow: /signup
+Disallow: /dashboard
+Disallow: /survey
+Disallow: /forgot-password
+Disallow: /reset-password
 Disallow: /backend/
+Disallow: /api/
 
 # Sitemap location
-Sitemap: https://retlify.com/sitemap.xml
+Sitemap: https://www.retlify.com/sitemap.xml
